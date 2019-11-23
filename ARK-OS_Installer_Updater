@@ -1,0 +1,27 @@
+#!/bin/bash
+# Script to update ARK-OS updater
+
+CURRENTDIR=$(pwd)
+LineRead=0
+
+rm $CURRENTDIR/Download_Links/Update_Download_Link.txt
+cd $CURRENTDIR/Bash_Scripts/gdown
+./gdown.pl https://gdurl.com/Rkji/download $CURRENTDIR/Download_Links/Update_Download_Link.txt
+cd $CURRENTDIR/Download_Links
+
+while read line
+do
+	if [ $LineRead -eq 1 ]
+        then
+                FileURL=$line
+		LineRead=2
+        fi
+        if [ $LineRead -eq 0 ]
+        then
+                LineRead=1
+        fi
+
+done < Update_Download_Link.txt
+
+cd $CURRENTDIR/Bash_Scripts/gdown
+

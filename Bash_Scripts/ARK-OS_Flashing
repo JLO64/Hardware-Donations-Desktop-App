@@ -1,0 +1,31 @@
+#!/bin/bash
+# Script to flash ARK-OS onto a HDD
+
+cd ..
+isoname=$(ls ToFlash)
+Color='\033[1;34m' # Blue
+NC='\033[0m' # No Color
+
+echo -e "Have you deleted any partitions on the drive with GParted yet? Type yes or no..."
+read yesno
+
+if [ "$yesno" != "yes" ]
+then
+	while [ "$yesno" != "yes" ]
+		do
+		echo -e "Opening GParted..."
+		gparted && echo -e "Did you delete all partitions on the hard drive? Type yes or no..."
+		read yesno
+	done
+fi
+
+lsblk
+
+echo -e "Please enter the disk to flash: "
+read diskflash
+
+CURRENTDIR=$(pwd)
+sudo dd if=$CURRENTDIR/ARK-OS/$isoname of=/dev/$diskflash bs=1M status=progress
+
+echo -e "Don't forget to expand the partition with GParted!!"
+gparted

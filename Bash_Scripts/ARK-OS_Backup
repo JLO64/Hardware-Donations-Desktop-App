@@ -1,0 +1,47 @@
+#!/bin/bash
+# Script to backup files for upgrade
+
+Color='\033[1;34m' # Blue
+NC='\033[0m' # No Color
+
+echo -e "${Color}Please enter the location to search in: "
+read part
+
+CURRENTDIR=$(pwd)
+PARTHOMEDIR=$part/home/user
+cd ..
+echo -e "${Color}Creating folder for backup${NC}"
+mkdir BackupData
+
+BACKUP=BackupData
+
+echo -e "${Color}Copying items in the Desktop folder${NC}"
+cp -rfv $PARTHOMEDIR/Desktop $BACKUP
+
+echo -e "${Color}Copying items in the Pictures folder${NC}"
+cp -rfv $PARTHOMEDIR/Pictures $BACKUP
+
+echo -e "${Color}Copying items in the Videos folder${NC}"
+cp -rfv $PARTHOMEDIR/Videos $BACKUP
+
+echo -e "${Color}Copying items in the Music folder${NC}"
+cp -rfv $PARTHOMEDIR/Music $BACKUP
+
+echo -e "${Color}Copying items in the Downloads folder${NC}"
+cp -rfv $PARTHOMEDIR/Downloads $BACKUP
+
+echo -e "${Color}Copying items in the Documents folder${NC}"
+cp -rfv $PARTHOMEDIR/Documents $BACKUP
+
+echo -e "${Color}Copying items in the Public folder${NC}"
+cp -rfv $PARTHOMEDIR/Public $BACKUP
+
+echo -e "${Color}Copying items in the Templates folder${NC}"
+cp -rfv $PARTHOMEDIR/Templates $BACKUP
+
+echo -e "${Color}Copying Firefox data${NC}"
+cp -rfv $PARTHOMEDIR/.mozilla/firefox/*.default* $BACKUP
+
+echo -e "${Color}Done copying data${NC}"
+
+sleep 5s

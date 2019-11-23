@@ -1,0 +1,91 @@
+#!/bin/bash
+# Script to download files
+
+LineRead=0
+FileName=()
+FileURL=()
+ArrayCount=0
+Download_Type=()
+
+Color='\033[1;34m' # Blue
+NC='\033[0m' # No Color
+
+cd ..
+CURRENTDIR=$(pwd)
+
+rm $CURRENTDIR/Download_Links/Download_Links.txt
+cd $CURRENTDIR/Bash_Scripts/gdown
+./gdown.pl https://gdurl.com/6HWz/download $CURRENTDIR/Download_Links/Download_Links.txt
+cd $CURRENTDIR/Download_Links
+
+
+while read line
+do
+	if [ $LineRead -eq 2 ]
+	then
+		FileURL[ArrayCount]=$line
+		LineRead=0
+	fi
+	if [ $LineRead -eq 1 ]
+	then
+		FileName[ArrayCount]=$line
+		LineRead=2
+		echo -e "${Color}Download Link $ArrayCount - ${FileName[$ArrayCount]}${NC}"
+	fi
+	if [ $line == "[ARK-OS]" ]
+	then
+		LineRead=1
+		let ArrayCount++
+		Download_Type[ArrayCount]=1
+	fi
+	if [ $line == "[PDF]" ]
+	then
+		LineRead=1
+		let ArrayCount++
+		Download_Type[ArrayCount]=2
+	fi
+	if [ $line == "[Kiwix]" ]
+	then
+		LineRead=1
+		let ArrayCount++
+		Download_Type[ArrayCount]=3
+	fi
+done < Download_Links.txt
+
+echo -e "${Color}Which link do you wish to download?${NC}"
+read LinkNumber
+
+if [ ${Download_Type[$LinkNumber]} -eq 1 ] 
+then
+	cd ..
+	cd Bash_Scripts
+	cd gdown
+	rm $CURRENTDIR/ARK-OS/${FileName[$LinkNumber]}
+	./gdown.pl ${FileURL[$LinkNumber]} $CURRENTDIR/ARK-OS/${FileName[$LinkNumber]}
+fi
+
+if [ ${Download_Type[$LinkNumber]} -eq 2 ] 
+then
+	cd ..
+	cd Bash_Scripts
+	cd gdown
+	rm $CURRENTDIR/PDFs/${FileName[$LinkNumber]}
+	./gdown.pl ${FileURL[$LinkNumber]} $CURRENTDIR/ARK-OS/${FileName[$LinkNumber]}
+fi
+if [ ${Download_Type[$LinkNumber]} -eq 3 ] 
+then
+	cd ..
+	cd Kiwix
+	rm $CURRENTDIR/Kiwix/${FileName[$LinkNumber]}
+	curl -O ${FileURL[$LinkNumber]}
+fi
+
+
+cd $CURRENTDIR/Bash_Scripts
+echo -e "${Color}Do you wish to download any other software?${NC}"
+read yesno
+if [ "$yesno" == "yes" ] || [ "$yesno" == "y" ] || [ "$yesno" == "Y" ]
+then
+	./ARK-OS_Download
+fi
+

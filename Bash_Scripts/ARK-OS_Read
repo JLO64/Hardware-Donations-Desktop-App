@@ -1,0 +1,50 @@
+#!/bin/bash
+# Script to list files
+
+cd ..
+
+echo -e "Here are the files listed in the ARK-OS directory."
+file_count=$(ls ARK-OS | wc -l)
+echo -e "There are $file_count files in this directory."
+
+let fileNum=0
+arr=()
+for entry in `ls ARK-OS`
+do
+	let fileNum++
+	arr[fileNum]=$entry
+	echo $fileNum ${arr[$fileNum]}
+done
+
+if [ "$fileNum" == "0" ]
+then
+	echo -e "Because there are no files in the ARK-OS directory I am now downloading a copy of ARK-OS."
+	cd Bash_Scripts
+	./ARK-OS_Download
+fi
+
+if (( "$fileNum" > "0" ))
+then
+	echo -e "Do you want to download a new copy of ARK-OS? Type yes or no..."
+	read yesno
+	if [ "$yesno" == "yes" ] || [ "$yesno" == "y" ] || [ "$yesno" == "Y" ]
+        then
+                echo -e "Alright! I am now downloading a copy of ARK-OS."
+		cd Bash_Scripts
+                ./ARK-OS_Download
+        fi
+
+        if [ "$yesno" == "no" ] || [ "$yesno" == "n" ] || [ "$yesno" == "N" ]
+        then
+                echo -e "Alright! Which of the $fileNum files do you want me to flash..."
+		read filePick
+		echo -e "You have picked ${arr[$filePick]} to flash."
+
+		rm -rf ToFlash
+		mkdir ToFlash
+		cd ToFlash
+		touch ${arr[$filePick]}
+
+        fi
+
+fi

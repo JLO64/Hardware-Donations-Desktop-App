@@ -1,0 +1,21 @@
+#!/bin/bash
+# Script to paste files that were downloaded
+
+cd ..
+
+Color='\033[1;34m'
+NC='\033[0m' # No Color
+
+echo -e "${Color}Please enter the location to search in: ${NC}"
+read part
+
+CURRENTDIR=$(pwd)
+PARTHOMEDIR=$part/home/user
+
+echo -e "${Color}Copying Kiwix files${NC}"
+cp -rvf /home/user/Desktop/ARK-OS_Installer/Kiwix/* $PARTHOMEDIR/.www.kiwix.org/kiwix/bjwlrgdf.default/data/library
+
+echo -e "${Color}Copying Kiwix files${NC}"
+cp -rvf /home/user/Desktop/ARK-OS_Installer/PDFs/* $PARTHOMEDIR/Desktop
+
+sleep 15s

@@ -1,0 +1,46 @@
+#!/bin/bash
+# Script to restore files after upgrade
+
+cd ..
+
+echo -e "Please enter the location to search in: "
+read part
+
+CURRENTDIR=$(pwd)
+PARTHOMEDIR=$part/home/user
+BACKUP=$CURRENTDIR/BackupData
+
+echo -e "Copying items in the Desktop folder"
+cp -rfv $BACKUP/Desktop/* $PARTHOMEDIR/Desktop
+
+echo -e "Copying items in the Pictures folder"
+cp -rfv $BACKUP/Pictures/* $PARTHOMEDIR/Pictures
+
+echo -e "Copying items in the Videos folder"
+cp -rfv $BACKUP/Videos/* $PARTHOMEDIR/Videos
+
+echo -e "Copying items in the Music folder"
+cp -rfv $BACKUP/Music/* $PARTHOMEDIR/Music
+
+echo -e "Copying items in the Downloads folder"
+cp -rfv $BACKUP/Downloads/* $PARTHOMEDIR/Downloads
+
+echo -e "Copying items in the Documents folder"
+cp -rfv $BACKUP/Documents/* $PARTHOMEDIR/Documents
+
+echo -e "Copying items in the Public folder"
+cp -rfv $BACKUP/Public/* $PARTHOMEDIR/Public
+
+echo -e "Copying items in the Templates folder"
+cp -rfv $BACKUP/Templates/* $PARTHOMEDIR/Templates
+
+echo -e "Copying Firefox data"
+rm -rfv $PARTHOMEDIR/.mozilla/firefox/*.default*/*
+cp -rfv $BACKUP/*.default*/* $PARTHOMEDIR/.mozilla/firefox/*.default*/*
+
+echo -e "Deleting backup data"
+rm -rfv BackupData
+
+echo -e "Done backing up data"
+
+sleep 15s
