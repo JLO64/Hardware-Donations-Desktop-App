@@ -1,6 +1,0 @@
-[ARK-OS]
-ARK-USB_1.3.img
-https://gdurl.com/4Vgb/download
-[Kiwix]
-wikipedia_en_all_nopic_2018-09.zim
-ftp://download.kiwix.org/zim/wikipedia/wikipedia_en_all_nopic_2018-09.zim
