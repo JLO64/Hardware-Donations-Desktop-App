@@ -3,7 +3,7 @@ sys.path.append("Python_Functions")
 import terminalColor, downloadFiles, fileFunctions
 
 terminalColor.printGreenString("STARTING PROGRAM...")
-fileFunctions.checkForDirectory(os.path.expanduser('~') + "/Hardware_Donations")
+fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations")
 #os.system("./ARK-OS_Installer")
 
 #list files
