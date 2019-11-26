@@ -1,8 +1,9 @@
 import os, sys, glob
 sys.path.append("Python_Functions")
-import terminalColor, downloadFiles
+import terminalColor, downloadFiles, fileFunctions
 
-terminalColor.printGreenString("STARTING PROGRAM...\n")
+terminalColor.printGreenString("STARTING PROGRAM...")
+fileFunctions.checkForDirectory(os.path.expanduser('~') + "/Hardware_Donations")
 #os.system("./ARK-OS_Installer")
 
 #list files
@@ -20,7 +21,7 @@ while ( ( (intDecision < 1) or (intDecision > 4) ) or (terminateLoop == False) )
         elif (intDecision == 4): #Exit program
             terminateLoop = True
         elif (intDecision == 3): #Download files
-            downloadFiles.downloadFilesMain( os.getcwd() )
+            downloadFiles.downloadFilesMain()
     except:
         intDecision = 0
         terminalColor.printRedString("Invalid Input")
