@@ -21,7 +21,7 @@ def readFileList():
 
     intDecision = 0
     terminateLoop = False
-    while ( ( (intDecision < 1) or (intDecision > len(downloadURLs)) ) or (terminateLoop == False) ):
+    while ( ( (intDecision < 1) or (intDecision > len(downloadURLs) + 1 ) ) or (terminateLoop == False) ):
         
         downloadURLs = []
         for downloadable in obj["Legal"]:
@@ -34,14 +34,14 @@ def readFileList():
             terminalColor.printBlueString( str(len(downloadURLs)) + ". [PDF]" + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
-        terminalColor.printBlueString( str(len(downloadURLs) + 1 ) + ". Exit" )
+        terminalColor.printBlueString( str(len(downloadURLs) + 1 ) + ". Cancel" )
 
         try:
             print("Which file do you want to download?")
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > ( len(downloadURLs) + 1 ) ) ):
                 terminalColor.printRedString("Invalid Input")
-            elif (intDecision == ( len(downloadURLs) ) ):
+            elif (intDecision == ( len(downloadURLs) + 1 ) ):
                 terminateLoop = True
             else:
                 print("Downloading URL: " + downloadURLs[intDecision - 1])
