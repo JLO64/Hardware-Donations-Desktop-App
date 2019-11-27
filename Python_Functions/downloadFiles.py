@@ -1,10 +1,12 @@
 import urllib.request, os, sys, json
 import terminalColor, fileFunctions
 import array as arr
+from tkinter import filedialog
+from tkinter import *
 
 def downloadFilesMain():
     downloadFilesList()
-    readFileList()
+    chooseFolderToSaveFile( readFileList() )
 
 def downloadFilesList():
     fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Download_Links" )
@@ -14,6 +16,10 @@ def downloadFilesList():
     urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt" )
     terminalColor.printGreenString("Download Finished")
 
+def chooseFolderToSaveFile( urlToDownload ):
+    folder_selected = filedialog.askdirectory()
+    urllib.request.urlretrieve(urlToDownload, folder_selected + "/testDownload.txt" )
+
 def readFileList():
     with open(os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt", 'r') as myfile:
         data=myfile.read()
@@ -21,6 +27,7 @@ def readFileList():
 
     intDecision = 0
     terminateLoop = False
+    urlToDownload = ""
     while ( ( (intDecision < 1) or (intDecision > len(downloadURLs) + 1 ) ) or (terminateLoop == False) ):
         
         downloadURLs = []
@@ -46,7 +53,8 @@ def readFileList():
             else:
                 print("Downloading URL: " + downloadURLs[intDecision - 1])
                 terminateLoop = True
+                urlToDownload = downloadURLs[intDecision - 1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
-    
+    return urlToDownload
