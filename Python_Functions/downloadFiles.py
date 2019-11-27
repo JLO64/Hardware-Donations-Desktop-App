@@ -17,6 +17,8 @@ def downloadFilesList():
     terminalColor.printGreenString("Download Finished")
 
 def chooseFolderToSaveFile( urlToDownload ):
+    root = Tk()
+    root.withdraw()
     folder_selected = filedialog.askdirectory()
     urllib.request.urlretrieve(urlToDownload, folder_selected + "/testDownload.txt" )
 
