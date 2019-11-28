@@ -16,11 +16,20 @@ def downloadFilesList():
     urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt" )
     terminalColor.printGreenString("Download Finished")
 
-def chooseFolderToSaveFile( urlToDownload ):
-    root = Tk()
-    root.withdraw()
-    folder_selected = filedialog.askdirectory()
-    urllib.request.urlretrieve(urlToDownload, folder_selected + "/testDownload.txt" )
+def chooseFolderToSaveFile( downloadInfo ):
+    if(downloadInfo[1] == "none" ):
+        return
+    else:
+        root = Tk()
+        root.withdraw()
+        options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
+        options['title'] = "Save As"
+        options['initialfile'] = downloadInfo[1]
+        fileLoc = filedialog.asksaveasfile(mode='w', **options)
+        if (fileLoc == None):
+            terminalColor.printRedString("DOWNLOAD CANCELED")
+        #folder_selected = filedialog.askdirectory()
+        #urllib.request.urlretrieve(downloadInfo[0], folder_selected + "/testDownload.txt" )
 
 def readFileList():
     with open(os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt", 'r') as myfile:
@@ -29,17 +38,21 @@ def readFileList():
 
     intDecision = 0
     terminateLoop = False
-    urlToDownload = ""
+    urlToDownload = "none"
+    nameToDownload = "none"
     while ( ( (intDecision < 1) or (intDecision > len(downloadURLs) + 1 ) ) or (terminateLoop == False) ):
         
         downloadURLs = []
+        downloadName = []
         for downloadable in obj["Legal"]:
             downloadURLs.append(str(downloadable["url"]))
+            downloadName.append(str(downloadable["name"]))
             terminalColor.printBlueString( str(len(downloadURLs)) + ". [Legal]" + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
         for downloadable in obj["PDFs"]:
             downloadURLs.append(str(downloadable["url"]))
+            downloadName.append(str(downloadable["name"]))
             terminalColor.printBlueString( str(len(downloadURLs)) + ". [PDF]" + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
@@ -56,7 +69,8 @@ def readFileList():
                 print("Downloading URL: " + downloadURLs[intDecision - 1])
                 terminateLoop = True
                 urlToDownload = downloadURLs[intDecision - 1]
+                nameToDownload = downloadName[intDecision - 1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
-    return urlToDownload
+    return [urlToDownload, nameToDownload]
