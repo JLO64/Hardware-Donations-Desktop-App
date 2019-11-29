@@ -24,12 +24,18 @@ def chooseFolderToSaveFile( downloadInfo ):
         root.withdraw()
         options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
         options['title'] = "Download As"
-        options['initialdir'] = os.path.expanduser('~') + "/HardwareDonations/"
+        options['initialfile'] = downloadInfo[1]
+        
         if( downloadInfo[2] == ".txt" ):
             options['filetypes'] = [('text files', '.txt')]
         elif( downloadInfo[2] == ".pdf" ):
             options['filetypes'] = [('pdf files', '.pdf')]
-        options['initialfile'] = downloadInfo[1]
+
+        if( downloadInfo[3] == "PDFs" ):
+            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
+        elif( downloadInfo[3] == "Legal" ):
+            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
+            
         fileLoc = filedialog.asksaveasfilename(**options)
         if ( len(fileLoc) > 0 ):
             urllib.request.urlretrieve(downloadInfo[0], fileLoc )
@@ -47,16 +53,20 @@ def readFileList():
     terminateLoop = False
     urlToDownload = "none"
     nameToDownload = "none"
-    typeToDownload = "none"
-    while ( ( (intDecision < 1) or (intDecision > len(downloadURLs) + 1 ) ) or (terminateLoop == False) ):
-        
+    extensionToDownload = "none"
+    categoryToDownload = "none"
+
+    while ( ( (intDecision < 1) or (intDecision > len(downloadName) + 1 ) ) or (terminateLoop == False) ):
+
         downloadURLs = []
         downloadName = []
-        downloadType = []
+        downloadExtension = []
+        downloadCategory = []
         for downloadable in obj["Legal"]:
             downloadURLs.append(str(downloadable["url"]))
             downloadName.append(str(downloadable["name"]))
-            downloadName.append(str(downloadable["fileExtention"]))
+            downloadExtension.append(str(downloadable["fileExtention"]))
+            downloadCategory.append( "Legal" )
             terminalColor.printBlueString( str(len(downloadURLs)) + ". [Legal] " + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
@@ -64,27 +74,29 @@ def readFileList():
         for downloadable in obj["PDFs"]:
             downloadURLs.append(str(downloadable["url"]))
             downloadName.append(str(downloadable["name"]))
-            downloadName.append(str(downloadable["fileExtention"]))
+            downloadExtension.append(str(downloadable["fileExtention"]))
+            downloadCategory.append( "PDFs" )
             terminalColor.printBlueString( str(len(downloadURLs)) + ". [PDF] " + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
             print("     File Extension: " + downloadable["fileExtention"] )
-        terminalColor.printBlueString( str(len(downloadURLs) + 1 ) + ". Cancel" )
+        terminalColor.printBlueString( str( len(downloadName) + 1 ) + ". Cancel" )
 
         try:
             print("Which file do you want to download?")
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > ( len(downloadURLs) + 1 ) ) ):
                 terminalColor.printRedString("Invalid Input")
-            elif (intDecision == ( len(downloadURLs) + 1 ) ):
+            elif (intDecision == ( len(downloadName) + 1 ) ):
                 terminateLoop = True
             else:
                 print("Downloading URL: " + downloadURLs[intDecision - 1])
                 terminateLoop = True
                 urlToDownload = downloadURLs[intDecision - 1]
                 nameToDownload = downloadName[intDecision - 1]
-                typeToDownload = downloadType[intDecision - 1]
+                extensionToDownload = downloadExtension[intDecision - 1]
+                categoryToDownload = downloadCategory[intDecision - 1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
-    return [urlToDownload, nameToDownload, typeToDownload]
+    return [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload]
