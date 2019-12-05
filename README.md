@@ -1,20 +1,14 @@
-# ARK-USB-Files
+# Hardware Donations Desktop App
 
-## Dependencies To Import
+## Install Dependencies
 
-Run ```pip install request``` or ```pip3 install request```
+Run ```pip3 install -r requirements.txt``` in the terminal in the directory where all of the files are located.
 
-(Depends on whether or not you are using Python3.)
+## Generating An Executible File
 
-## How To Generate An Executible File
-
-Install PyInstaller by running ```pip install PyInstaller```
-
-(run ```pip3 install PyInstaller``` if you used ```pip3```)
-
-Then in the directory where ```HardwareDonations.py``` is located run ```pyinstaller ARK-USB.py -F -p Python_Functions/```
+In the directory where ```Hardware-Donations.py``` is located run ```pyinstaller Hardware-Donations.py -F -p Python_Functions/```
 
 A new "dist" directory will be generated and the executible file will be there.
 
-### Install System-Wide (Linux)
-Copy the executible file to the ```/usr/local/bin``` directory. You will need sudo privalages for this command.
+## Install System-Wide (Linux)
+Copy the executible file to the ```/usr/local/bin``` directory. You will need sudo privalages for this command. To run the program just type in ```Hardware-Donations``` from any directory in the terminal.

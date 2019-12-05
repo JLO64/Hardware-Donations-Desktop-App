@@ -30,17 +30,21 @@ def chooseFolderToSaveFile( downloadInfo ):
             options['filetypes'] = [('text files', '.txt')]
         elif( downloadInfo[2] == ".pdf" ):
             options['filetypes'] = [('pdf files', '.pdf')]
+        elif( downloadInfo[2] == ".zip" ):
+            options['filetypes'] = [('zip files', '.zip')]
 
         if( downloadInfo[3] == "PDFs" ):
             options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
         elif( downloadInfo[3] == "Legal" ):
             options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
+        elif( downloadInfo[3] == "Photos" ):
+            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
             
         fileLoc = filedialog.asksaveasfilename(**options)
         if ( len(fileLoc) > 0 ):
             urllib.request.urlretrieve(downloadInfo[0], fileLoc )
             terminalColor.printGreenString("DOWNLOAD FINISHED")
-            print("File Location: " + fileLoc)
+            print("File Saved To: " + fileLoc)
         else:
             terminalColor.printRedString("DOWNLOAD CANCELED")
 
@@ -49,7 +53,7 @@ def readFileList():
         data=myfile.read()
     obj = json.loads(data)
 
-    typesOfDownload = ["Legal", "PDFs"]
+    typesOfDownload = ["Legal", "PDFs", "Photos"]
     categorySelection = 0
     while ( categorySelection < 1 ) or (categorySelection  > ( len(typesOfDownload) + 1 ) ):
         print("What category do you want to browse for downloads?")
