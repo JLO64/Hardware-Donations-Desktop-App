@@ -6,7 +6,7 @@ from tkinter import *
 
 def downloadFilesMain():
     downloadFilesList()
-    chooseFolderToSaveFile( readFileList() )
+    readFileList()
 
 def downloadFilesList():
     fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Download_Links" )
@@ -49,34 +49,38 @@ def readFileList():
         data=myfile.read()
     obj = json.loads(data)
 
+    typesOfDownload = ["Legal", "PDFs"]
+    categorySelection = 0
+    while ( categorySelection < 1 ) or (categorySelection  > ( len(typesOfDownload) + 1 ) ):
+        print("What category do you want to browse for downloads?")
+        for i in range (len(typesOfDownload)):
+            terminalColor.printBlueString( str(i+1) + ". " + typesOfDownload[i])
+        terminalColor.printBlueString( str(len(typesOfDownload) + 1) + ". Cancel" )
+        categorySelection = int(input())
+        if ( categorySelection > 0 ) and (categorySelection  <= ( len(typesOfDownload) ) ):
+            chooseFileToDownload( obj, typesOfDownload[categorySelection - 1])
+        elif( categorySelection == ( len(typesOfDownload) + 1 ) ):
+            return
+
+def chooseFileToDownload( obj, typeOfDownload):
     intDecision = 0
     terminateLoop = False
     urlToDownload = "none"
     nameToDownload = "none"
     extensionToDownload = "none"
     categoryToDownload = "none"
-
     while ( ( (intDecision < 1) or (intDecision > len(downloadName) + 1 ) ) or (terminateLoop == False) ):
 
         downloadURLs = []
         downloadName = []
         downloadExtension = []
         downloadCategory = []
-        for downloadable in obj["Legal"]:
+        for downloadable in obj[typeOfDownload]:
             downloadURLs.append(str(downloadable["url"]))
             downloadName.append(str(downloadable["name"]))
             downloadExtension.append(str(downloadable["fileExtention"]))
-            downloadCategory.append( "Legal" )
-            terminalColor.printBlueString( str(len(downloadURLs)) + ". [Legal] " + downloadable["name"] )
-            print("     Description: " + downloadable["description"] )
-            print("     Size: " + downloadable["size"] )
-            print("     File Extension: " + downloadable["fileExtention"] )
-        for downloadable in obj["PDFs"]:
-            downloadURLs.append(str(downloadable["url"]))
-            downloadName.append(str(downloadable["name"]))
-            downloadExtension.append(str(downloadable["fileExtention"]))
-            downloadCategory.append( "PDFs" )
-            terminalColor.printBlueString( str(len(downloadURLs)) + ". [PDF] " + downloadable["name"] )
+            downloadCategory.append( typeOfDownload )
+            terminalColor.printBlueString( str(len(downloadURLs)) + ". " + downloadable["name"] )
             print("     Description: " + downloadable["description"] )
             print("     Size: " + downloadable["size"] )
             print("     File Extension: " + downloadable["fileExtention"] )
@@ -96,7 +100,9 @@ def readFileList():
                 nameToDownload = downloadName[intDecision - 1]
                 extensionToDownload = downloadExtension[intDecision - 1]
                 categoryToDownload = downloadCategory[intDecision - 1]
+
+                chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
-    return [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload]
+    return
