@@ -23,7 +23,10 @@ if __name__ == "__main__":
             elif ( listOfOptions[intDecision-1] == ". Exit"): #Exit program
                 break
             elif ( listOfOptions[intDecision-1] == ". Download files"): #Download files
-                downloadFiles.downloadFilesMain()
+                if (fileFunctions.internet_on() == True):
+                    downloadFiles.downloadFilesMain()
+                else:
+                    terminalColor.printRedString("Unable to connect to internet")
             else:
                 intDecision = 0    
         except:
