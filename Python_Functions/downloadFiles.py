@@ -39,6 +39,8 @@ def chooseFolderToSaveFile( downloadInfo ):
             options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
         elif( downloadInfo[3] == "Photos" ):
             options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+        elif( downloadInfo[3] == "Wallpapers" ):
+            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
             
         fileLoc = filedialog.asksaveasfilename(**options)
         if ( len(fileLoc) > 0 ):
@@ -60,11 +62,16 @@ def readFileList():
         for i in range (len(typesOfDownload)):
             terminalColor.printBlueString( str(i+1) + ". " + typesOfDownload[i])
         terminalColor.printBlueString( str(len(typesOfDownload) + 1) + ". Cancel" )
-        categorySelection = int(input())
-        if ( categorySelection > 0 ) and (categorySelection  <= ( len(typesOfDownload) ) ):
-            chooseFileToDownload( obj, typesOfDownload[categorySelection - 1])
-        elif( categorySelection == ( len(typesOfDownload) + 1 ) ):
-            return
+        try:
+            categorySelection = int(input())
+            if ( categorySelection > 0 ) and (categorySelection  <= ( len(typesOfDownload) ) ):
+                categorySelection = 0
+                chooseFileToDownload( obj, typesOfDownload[categorySelection - 1])
+            elif( categorySelection == ( len(typesOfDownload) + 1 ) ):
+                return
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
 
 def chooseFileToDownload( obj, typeOfDownload):
     intDecision = 0
