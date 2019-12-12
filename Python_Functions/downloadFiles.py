@@ -1,5 +1,5 @@
 import urllib.request, os, sys, json
-import terminalColor, fileFunctions
+import terminalColor, fileFunctions, settingsJson
 import array as arr
 from tkinter import filedialog
 from tkinter import *
@@ -11,7 +11,7 @@ def downloadFilesMain():
 def downloadFilesList():
     fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Download_Links" )
 
-    print("Downloading list of files")
+    terminalColor.printGreenString("Downloading list of files")
     url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/DownloadList.txt"
     urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt" )
     terminalColor.printGreenString("Download Finished")
@@ -20,30 +20,42 @@ def chooseFolderToSaveFile( downloadInfo ):
     if(downloadInfo[1] == "none" ):
         return
     else:
-        root = Tk()
-        root.withdraw()
-        options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
-        options['title'] = "Download As"
-        options['initialfile'] = downloadInfo[1]
-        
-        if( downloadInfo[2] == ".txt" ):
-            options['filetypes'] = [('text files', '.txt')]
-        elif( downloadInfo[2] == ".pdf" ):
-            options['filetypes'] = [('pdf files', '.pdf')]
-        elif( downloadInfo[2] == ".zip" ):
-            options['filetypes'] = [('zip files', '.zip')]
-
-        if( downloadInfo[3] == "PDFs" ):
-            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
-        elif( downloadInfo[3] == "Legal" ):
-            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
-        elif( downloadInfo[3] == "Photos" ):
-            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
-        elif( downloadInfo[3] == "Wallpapers" ):
-            options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+        fileLoc = ""
+        if( settingsJson.guiMode == True ):
+            root = Tk()
+            root.withdraw()
+            options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
+            options['title'] = "Download As"
+            options['initialfile'] = downloadInfo[1]
             
-        fileLoc = filedialog.asksaveasfilename(**options)
+            if( downloadInfo[2] == ".txt" ):
+                options['filetypes'] = [('text files', '.txt')]
+            elif( downloadInfo[2] == ".pdf" ):
+                options['filetypes'] = [('pdf files', '.pdf')]
+            elif( downloadInfo[2] == ".zip" ):
+                options['filetypes'] = [('zip files', '.zip')]
+
+            if( downloadInfo[3] == "PDFs" ):
+                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
+            elif( downloadInfo[3] == "Legal" ):
+                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
+            elif( downloadInfo[3] == "Photos" ):
+                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+            elif( downloadInfo[3] == "Wallpapers" ):
+                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+                
+            fileLoc = filedialog.asksaveasfilename(**options)
+        elif(settingsJson.guiMode == False):
+            validDirPath = False
+            while validDirPath == False:
+                print("Please type the path of the directory you want to save to")
+                fileLoc = str(input())
+                if not "/" == fileLoc[-1]:
+                    terminalColor.printRedString("Invalid directory")
+                else:
+                    validDirPath = True
         if ( len(fileLoc) > 0 ):
+            fileLoc = fileLoc + downloadInfo[1]
             urllib.request.urlretrieve(downloadInfo[0], fileLoc )
             terminalColor.printGreenString("DOWNLOAD FINISHED")
             print("File Saved To: " + fileLoc)
@@ -65,8 +77,8 @@ def readFileList():
         try:
             categorySelection = int(input())
             if ( categorySelection > 0 ) and (categorySelection  <= ( len(typesOfDownload) ) ):
-                categorySelection = 0
                 chooseFileToDownload( obj, typesOfDownload[categorySelection - 1])
+                categorySelection = 0
             elif( categorySelection == ( len(typesOfDownload) + 1 ) ):
                 return
         except:

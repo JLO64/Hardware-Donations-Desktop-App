@@ -1,13 +1,14 @@
 import os, sys, glob
 sys.path.append("Python_Functions")
-import terminalColor, downloadFiles, fileFunctions, settings
+import terminalColor, downloadFiles, fileFunctions, settings, settingsJson
 
-terminalColor.printGreenString("STARTING PROGRAM...\n")
+terminalColor.printGreenString("STARTING PROGRAM...")
 fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations")
-#os.system("./ARK-OS_Installer")
+settings.initializeSettings()
+terminalColor.printGreenString("SETTINGS LOADED!\n")
 
-#list files
-#print(glob.glob("ARK-OS/*"))
+#os.system("./ARK-OS_Installer")
+#print(glob.glob("ARK-OS/*")) #list files
 
 if __name__ == "__main__":
     intDecision = 0

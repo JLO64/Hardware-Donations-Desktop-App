@@ -1,13 +1,5 @@
-import terminalColor, fileFunctions
+import terminalColor, fileFunctions, settingsJson
 import json, os
-
-class SomeClass :
-    hasReadFile = False
-    guiMode = True
-
-    def getGuiMode():
-        if( not hasReadFile):
-            print("")
 
 def changeSettings():
     intDecision = 0
@@ -32,6 +24,8 @@ def changeSettings():
             terminalColor.printRedString("Invalid Input")
 
 def changeGUI():
+    global guiMode
+
     intDecision = 0
     listOfOptions =[". Yes(Default)", ". No", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
@@ -45,9 +39,11 @@ def changeGUI():
             elif ( listOfOptions[intDecision-1] == ". Cancel"):
                 break
             elif ( listOfOptions[intDecision-1] == ". Yes(Default)"):
-                writeJSONSettings(True, "GUImode")
+                settingsJson.guiMode = True
+                writeJSONSettings()
             elif ( listOfOptions[intDecision-1] == ". No"):
-                writeJSONSettings(False, "GUImode")
+                settingsJson.guiMode = False
+                writeJSONSettings()
             else:
                 intDecision = 0    
         except:
@@ -55,9 +51,24 @@ def changeGUI():
             terminalColor.printRedString("Invalid Input")
     terminalColor.printGreenString("SETTINGS UPDATED")
 
-def writeJSONSettings( ToChangeTo, SettingToChange ):
+def writeJSONSettings():
     fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Settings" )
     data = {}
-    data['SettingToChange'] = ToChangeTo
+    data["GUImode"] = settingsJson.guiMode
     with open( os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt", 'w') as outfile:
         json.dump(data, outfile)
+
+def readJSONSettings():
+    if fileFunctions.checkForFile(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt"):
+        with open(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt") as json_file:
+            data = json.load(json_file)
+            return data
+    else: 
+        writeJSONSettings()
+        data = {}
+        return data
+
+def initializeSettings():
+    data = readJSONSettings()
+    if( not data == {} ):
+        settingsJson.guiMode = data["GUImode"]   

@@ -9,10 +9,10 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def printRedString( stringToPrint ):
-    print( bcolors.RED + stringToPrint + bcolors.ENDC )
+    print( bcolors.RED + stringToPrint.upper() + bcolors.ENDC )
 
 def printGreenString( stringToPrint ):
-    print( bcolors.GREEN + stringToPrint + bcolors.ENDC )
+    print( bcolors.GREEN + stringToPrint.upper() + bcolors.ENDC )
 
 def printBlueString( stringToPrint ):
     print( bcolors.BLUE + stringToPrint + bcolors.ENDC )
