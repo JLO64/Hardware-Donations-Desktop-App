@@ -48,14 +48,16 @@ def chooseFolderToSaveFile( downloadInfo ):
         elif(settingsJson.guiMode == False):
             validDirPath = False
             while validDirPath == False:
-                print("Please type the path of the directory you want to save to")
+                print("Please type the path of the directory you want to save to.(Or type \"Cancel\")")
                 fileLoc = str(input())
-                if not "/" == fileLoc[-1]:
+                if fileLoc.lower() == "cancel":
+                    break
+                elif not ( "/" == fileLoc[-1] and os.path.exists(fileLoc) ):
                     terminalColor.printRedString("Invalid directory")
                 else:
                     validDirPath = True
-        if ( len(fileLoc) > 0 ):
-            fileLoc = fileLoc + downloadInfo[1]
+        if ( len(fileLoc) > 0 ) and not (fileLoc.lower() == "cancel"):
+            fileLoc = fileLoc + downloadInfo[1] + downloadInfo[2]
             urllib.request.urlretrieve(downloadInfo[0], fileLoc )
             terminalColor.printGreenString("DOWNLOAD FINISHED")
             print("File Saved To: " + fileLoc)
