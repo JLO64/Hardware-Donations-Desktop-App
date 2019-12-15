@@ -42,7 +42,7 @@ def chooseFolderToSaveFile( downloadInfo ):
             elif( downloadInfo[3] == "Photos" ):
                 options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
             elif( downloadInfo[3] == "Wallpapers" ):
-                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Wallpapers")
                 
             fileLoc = filedialog.asksaveasfilename(**options)
         elif(settingsJson.guiMode == False):
@@ -69,7 +69,7 @@ def readFileList():
         data=myfile.read()
     obj = json.loads(data)
 
-    typesOfDownload = ["Legal", "PDFs", "Photos"]
+    typesOfDownload = ["Legal", "PDFs", "Photos", "Wallpapers"]
     categorySelection = 0
     while ( categorySelection < 1 ) or (categorySelection  > ( len(typesOfDownload) + 1 ) ):
         print("What category do you want to browse for downloads?")
