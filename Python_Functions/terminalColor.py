@@ -1,3 +1,5 @@
+import settingsJson
+
 class bcolors:
     HEADER = '\033[95m'
     BLUE = '\033[1;34m'
@@ -9,10 +11,13 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def printRedString( stringToPrint ):
-    print( bcolors.RED + stringToPrint.upper() + bcolors.ENDC )
+    if settingsJson.colorMode == True: print( bcolors.RED + stringToPrint.upper() + bcolors.ENDC )
+    else: print(stringToPrint.upper())
 
 def printGreenString( stringToPrint ):
-    print( bcolors.GREEN + stringToPrint.upper() + bcolors.ENDC )
+    if settingsJson.colorMode == True: print( bcolors.GREEN + stringToPrint.upper() + bcolors.ENDC )
+    else: print(stringToPrint.upper())
 
 def printBlueString( stringToPrint ):
-    print( bcolors.BLUE + stringToPrint + bcolors.ENDC )
+    if settingsJson.colorMode == True: print( bcolors.BLUE + stringToPrint + bcolors.ENDC )
+    else: print(stringToPrint)

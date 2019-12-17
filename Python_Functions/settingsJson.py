@@ -1,1 +1,2 @@
 guiMode = True
+colorMode = True
