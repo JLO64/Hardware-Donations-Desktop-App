@@ -6,7 +6,7 @@ def changeSettings():
     listOfOptions =[". GUI Mode", ". Color Mode", ". Version Info", ". Exit"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
-            print("What settings do you want to change?")
+            print("\nWhat settings do you want to change?")
             for i in range( len(listOfOptions) ):
                 terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
             intDecision = int(input())
@@ -22,7 +22,7 @@ def changeSettings():
                 changeColor()
             elif ( listOfOptions[intDecision-1] == ". Version Info"):
                 intDecision = 0
-                print("Hardware-Donations Desktop App\nVersion Pre-Production\nBuilt With Python 3.6.9\n")
+                print("\nHardware-Donations Desktop App\nVersion Pre-Production\nBuilt With Python 3.6.9\n")
             else:
                 intDecision = 0    
         except:
@@ -34,7 +34,7 @@ def changeGUI():
     listOfOptions =[". Yes(Default)", ". No", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
-            print("Do you want GUI Mode to be ON? If turned off file paths will have to be entered manually.")
+            print("\nDo you want GUI Mode to be ON? If turned off file paths will have to be entered manually.")
             if settingsJson.guiMode == True: print("Currently GUI Mode is ON")
             else: print("Currently GUI Mode is OFF")
 
@@ -63,7 +63,7 @@ def changeColor():
     listOfOptions =[". Yes(Default)", ". No", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
-            print("Do you want Color Mode to be ON? If turned off it is harder to use the terminal interface.")
+            print("\nDo you want Color Mode to be ON? If turned off it is harder to use the terminal interface.")
             if settingsJson.colorMode == True: print("Currently Color Mode is ON")
             else: print("Currently Color Mode is OFF")
 

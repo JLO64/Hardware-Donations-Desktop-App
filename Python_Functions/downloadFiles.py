@@ -11,7 +11,7 @@ def downloadFilesMain():
 def downloadFilesList():
     fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Download_Links" )
 
-    terminalColor.printGreenString("Downloading list of files")
+    terminalColor.printGreenString("\nDownloading list of files")
     url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/DownloadList.txt"
     urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt" )
     terminalColor.printGreenString("Download Finished")
@@ -72,7 +72,7 @@ def readFileList():
     typesOfDownload = ["Legal", "PDFs", "Photos", "Wallpapers"]
     categorySelection = 0
     while ( categorySelection < 1 ) or (categorySelection  > ( len(typesOfDownload) + 1 ) ):
-        print("What category do you want to browse for downloads?")
+        print("\nWhat category do you want to browse for downloads?")
         for i in range (len(typesOfDownload)):
             terminalColor.printBlueString( str(i+1) + ". " + typesOfDownload[i])
         terminalColor.printBlueString( str(len(typesOfDownload) + 1) + ". Cancel" )
@@ -95,7 +95,7 @@ def chooseFileToDownload( obj, typeOfDownload):
     extensionToDownload = "none"
     categoryToDownload = "none"
     while ( ( (intDecision < 1) or (intDecision > len(downloadName) + 1 ) ) or (terminateLoop == False) ):
-
+        print("\n")
         downloadURLs = []
         downloadName = []
         downloadExtension = []
@@ -119,7 +119,7 @@ def chooseFileToDownload( obj, typeOfDownload):
             elif (intDecision == ( len(downloadName) + 1 ) ):
                 terminateLoop = True
             else:
-                print("Downloading URL: " + downloadURLs[intDecision - 1])
+                print("\nDownloading URL: " + downloadURLs[intDecision - 1])
                 terminateLoop = True
                 urlToDownload = downloadURLs[intDecision - 1]
                 nameToDownload = downloadName[intDecision - 1]
