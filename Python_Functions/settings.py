@@ -2,8 +2,8 @@ import terminalColor, fileFunctions, settingsJson
 import json, os
 
 def changeSettings():
-    intDecision = 0
-    listOfOptions =[". GUI Mode", ". Color Mode", ". Version Info", ". Exit"]
+    intDecision = 0:wq
+    listOfOptions =[". GUI Mode", ". Color Mode", ". Version Info", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
             print("\nWhat settings do you want to change?")
@@ -12,7 +12,7 @@ def changeSettings():
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ):
                 terminalColor.printRedString("Invalid Input")
-            elif ( listOfOptions[intDecision-1] == ". Exit"): #Exit program
+            elif ( listOfOptions[intDecision-1] == ". Cancel"): #Exit program
                 break
             elif ( listOfOptions[intDecision-1] == ". GUI Mode"):
                 intDecision = 0
@@ -108,5 +108,5 @@ def readJSONSettings():
 def initializeSettings():
     data = readJSONSettings()
     if( not data == {} ):
-        settingsJson.guiMode = data["GUImode"]
+        if(not settingsJson.guiMode == False): settingsJson.guiMode = data["GUImode"]
         settingsJson.colorMode = data["colorMode"]

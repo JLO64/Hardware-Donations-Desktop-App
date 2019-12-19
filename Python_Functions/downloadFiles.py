@@ -1,8 +1,10 @@
-import urllib.request, os, sys, json
+import os, sys, json, urllib.request
 import terminalColor, fileFunctions, settingsJson
 import array as arr
-from tkinter import filedialog
-from tkinter import *
+try: from tkinter import *
+except:
+    settingsJson.guiMode = False
+    pass
 
 def downloadFilesMain():
     downloadFilesList()
