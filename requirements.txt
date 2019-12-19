@@ -1,2 +1,3 @@
 request
 PyInstaller
+boto3

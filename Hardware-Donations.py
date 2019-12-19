@@ -1,6 +1,6 @@
 import os, sys, glob, webbrowser, io, time
 sys.path.append("Python_Functions")
-import terminalColor, downloadFiles, fileFunctions, settings, settingsJson
+import terminalColor, downloadFiles, fileFunctions, settings, settingsJson, browseDatabase
 
 
 terminalColor.printGreenString("STARTING PROGRAM...")
@@ -25,16 +25,22 @@ if __name__ == "__main__":
                 intDecision = 0
                 if (fileFunctions.internet_on() == True): downloadFiles.downloadFilesMain()
                 else: terminalColor.printRedString("Unable to connect to internet")
+            elif ( listOfOptions[intDecision-1] == ". Download Files"):
+                intDecision = 0
+                if (fileFunctions.internet_on() == True): downloadFiles.downloadFilesMain()
+                else: terminalColor.printRedString("Unable to connect to internet")
+            elif ( listOfOptions[intDecision-1] == ". Browse Database"):
+                intDecision = 0
+                if (fileFunctions.internet_on() == True): browseDatabase.loginToAWS()
+                else: terminalColor.printRedString("Unable to connect to internet")
             elif ( listOfOptions[intDecision-1] == ". Settings"):
                 intDecision = 0
                 settings.changeSettings()
             elif ( listOfOptions[intDecision-1] == ". Go To Youtube Channel"):
                 intDecision = 0
-                if (fileFunctions.internet_on() == True):
-                    terminalColor.printGreenString("\nopening youtube")
-                    webbrowser.open("https://www.youtube.com/channel/UCKd1F6Tbmgqhnt2bADXCCTg", new=0, autoraise=True)
-                    time.sleep(1)
-                else: terminalColor.printRedString("Unable to connect to internet")
+                terminalColor.printGreenString("\nopening youtube")
+                webbrowser.open("https://www.youtube.com/channel/UCKd1F6Tbmgqhnt2bADXCCTg", new=0, autoraise=True)
+                time.sleep(0.7)
             else:
                 intDecision = 0    
         except:
