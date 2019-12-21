@@ -2,7 +2,7 @@ import terminalColor, fileFunctions, settingsJson
 import json, os
 
 def changeSettings():
-    intDecision = 0:wq
+    intDecision = 0
     listOfOptions =[". GUI Mode", ". Color Mode", ". Version Info", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
