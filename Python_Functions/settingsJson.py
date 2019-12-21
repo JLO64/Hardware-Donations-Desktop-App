@@ -1,4 +1,4 @@
 guiMode = True
 colorMode = True
-username = "user"
-password = "pass"
+username = "na"
+password = "na"
