@@ -65,7 +65,9 @@ def hasValidCredStored():
 
 def searchUnits():
     unitTypeInt = 0
+    unitNumInt = 0
     unitType = ""
+    unitID = ""
     listOfUnitTypes =[". HDD", ". HDL", ". NX", ". Exit"]
     while ( (unitTypeInt < 1 ) or (unitTypeInt > len(listOfUnitTypes)) ):
         try:
@@ -77,7 +79,13 @@ def searchUnits():
             elif ( listOfUnitTypes[unitTypeInt-1] == ". HDD"): unitType = "HDD"
             elif ( listOfUnitTypes[unitTypeInt-1] == ". HDL"): unitType = "HDL"
             elif ( listOfUnitTypes[unitTypeInt-1] == ". NX"): unitType = "NX"
-
+            print("\nWhat unit number do you want to search for?")
+            unitNumInt = int(input())
+            unitID = unitType + "-" + str(unitNumInt)
+            getUnitInfo(unitID)
         except:
             unitTypeInt = 0
             terminalColor.printRedString("Invalid Input")
+
+def getUnitInfo(unitID):
+    print(unitID)
