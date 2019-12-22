@@ -1,5 +1,5 @@
-import boto3, json, getpass
-import terminalColor, settingsJson
+import boto3, json, getpass, os
+import terminalColor, settingsJson, fileFunctions
 
 lambda_client = boto3.client('lambda')
 
@@ -24,7 +24,7 @@ def askForCredentials(): #Ask user for login info
             if hasValidCred:
                 settingsJson.username = username
                 settingsJson.password = password
-                selectCategory()
+                askToSaveLoginInfo()
             else: terminalColor.printRedString("Login Failed")
         except:
             terminalColor.printRedString("Invalid Input")
@@ -89,3 +89,23 @@ def searchUnits():
 
 def getUnitInfo(unitID):
     print(unitID)
+
+def askToSaveLoginInfo():
+    saveChoice = 0
+    listOfChoices =[". Yes", ". No"]
+    while ( (saveChoice < 1 ) or (saveChoice > len(listOfChoices)) ):
+        try:
+            print("Do want to save your login credentials?")
+            for i in range( len(listOfChoices) ): terminalColor.printBlueString( str(i+1) + listOfChoices[i] )
+            saveChoice = int(input())
+            if ( (saveChoice < 1) or (saveChoice > len(listOfChoices)) ): terminalColor.printRedString("Invalid Input")
+            elif ( listOfChoices[saveChoice-1] == ". No"): break
+            elif ( listOfChoices[saveChoice-1] == ". Yes"):
+                fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Settings" )
+                jsonToSave = dict(userToTest=settingsJson.username, passwordToTest=settingsJson.password)
+                with open( os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo.txt", 'w') as outfile:
+                    json.dump(jsonToSave, outfile)
+                terminalColor.printGreenString("Login credentials saved")
+        except:
+            saveChoice = 0
+            terminalColor.printRedString("Invalid Input")
