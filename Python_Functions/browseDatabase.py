@@ -61,7 +61,7 @@ def selectCategory():
             terminalColor.printRedString("Invalid Input")
 
 def hasValidCredStored():
-    if( settingsJson.key1 == "na" ):
+    if not readSavedCredentials() or ( settingsJson.key1 == "na" ):
         return False
     else:
         return True
@@ -112,3 +112,13 @@ def askToSaveLoginInfo():
         except:
             saveChoice = 0
             terminalColor.printRedString("Invalid Input")
+
+def readSavedCredentials():
+    if fileFunctions.checkForFile(os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo"):
+        with open(os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo") as json_file:
+            data = json.load(json_file)
+            settingsJson.key1 = data.get('key1')
+            settingsJson.key2 = data.get('key2')
+            settingsJson.key3 = data.get('key3')
+            return True
+    else: return False
