@@ -7,7 +7,7 @@ def loginToAWS():
     if not hasValidCredStored():
         askForCredentials()
     else:
-        hasValidCred = checkCredentials(dict(userToTest=settingsJson.username, passwordToTest=settingsJson.password, type="verify_password"))
+        hasValidCred = checkCredentials(dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="verify_key"))
         if hasValidCred: selectCategory()
         while not hasValidCred: askForCredentials()
 
@@ -20,11 +20,10 @@ def askForCredentials(): #Ask user for login info
             if username.lower()=="cancel": break
             password = getpass.getpass(prompt="Password(Input Hidden): ")
             if password.lower()=="cancel": break
-            hasValidCred = checkCredentials(dict(userToTest=username, passwordToTest=password, type="verify_password"))
+            hasValidCred = checkCredentials(dict(username=username, password=password, type="verify_password"))
             if hasValidCred:
-                settingsJson.username = username
-                settingsJson.password = password
                 askToSaveLoginInfo()
+                selectCategory()
             else: terminalColor.printRedString("Login Failed")
         except:
             terminalColor.printRedString("Invalid Input")
@@ -37,7 +36,11 @@ def checkCredentials(credentials): #Connect to AWS Lambda to check login
         Payload=json.dumps(credentials),
     )
     passTest=json.loads(response['Payload'].read())
-    if (passTest.get('result')): terminalColor.printGreenString("Login Successful")
+    if (passTest.get('result')):
+        terminalColor.printGreenString("Login Successful")
+        settingsJson.key1 = passTest.get('key1')
+        settingsJson.key2 = passTest.get('key2')
+        settingsJson.key3 = passTest.get('key3')
     return passTest.get('result')
 
 def selectCategory():
@@ -58,7 +61,7 @@ def selectCategory():
             terminalColor.printRedString("Invalid Input")
 
 def hasValidCredStored():
-    if( settingsJson.username == "na" and settingsJson.password == "na" ):
+    if( settingsJson.key1 == "na" ):
         return False
     else:
         return True
@@ -102,8 +105,8 @@ def askToSaveLoginInfo():
             elif ( listOfChoices[saveChoice-1] == ". No"): break
             elif ( listOfChoices[saveChoice-1] == ". Yes"):
                 fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Settings" )
-                jsonToSave = dict(userToTest=settingsJson.username, passwordToTest=settingsJson.password)
-                with open( os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo.txt", 'w') as outfile:
+                jsonToSave = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3)
+                with open( os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo", 'w') as outfile:
                     json.dump(jsonToSave, outfile)
                 terminalColor.printGreenString("Login credentials saved")
         except:

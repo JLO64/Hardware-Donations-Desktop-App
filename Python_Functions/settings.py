@@ -92,12 +92,12 @@ def writeJSONSettings():
     data = {}
     data["GUImode"] = settingsJson.guiMode
     data["colorMode"] = settingsJson.colorMode
-    with open( os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt", 'w') as outfile:
+    with open( os.path.expanduser('~') + "/HardwareDonations/Settings/Settings", 'w') as outfile:
         json.dump(data, outfile)
 
 def readJSONSettings():
-    if fileFunctions.checkForFile(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt"):
-        with open(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings.txt") as json_file:
+    if fileFunctions.checkForFile(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings"):
+        with open(os.path.expanduser('~') + "/HardwareDonations/Settings/Settings") as json_file:
             data = json.load(json_file)
             return data
     else: 

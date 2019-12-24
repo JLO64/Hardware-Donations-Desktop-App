@@ -1,4 +1,5 @@
 guiMode = True
 colorMode = True
-username = "na"
-password = "na"
+key1 = "na"
+key2 = "na"
+key3 = "na"
