@@ -9,11 +9,12 @@ def loginToAWS():
     else:
         hasValidCred = checkCredentials(dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="verify_key"))
         if hasValidCred: selectCategory()
-        while not hasValidCred: askForCredentials()
+        while not hasValidCred:
+            hasValidCred = askForCredentials()
 
 def askForCredentials(): #Ask user for login info
     hasValidCred = False
-    
+
     while(not hasValidCred):
         try:
             print("\nPlease type your Hardware Donations Username and Password.(Type \"Cancel\" to exit)\nUsername:", end=" ")
@@ -25,7 +26,10 @@ def askForCredentials(): #Ask user for login info
             if hasValidCred:
                 askToSaveLoginInfo()
                 selectCategory()
-            else: terminalColor.printRedString("Login Failed")
+                return True
+            else:
+                terminalColor.printRedString("Login Failed")
+                return False
         except:
             terminalColor.printRedString("Invalid Input")
 
@@ -63,10 +67,10 @@ def selectCategory():
             terminalColor.printRedString("Invalid Input")
 
 def hasValidCredStored():
-    if not readSavedCredentials() or ( settingsJson.key1 == "na" ):
-        return False
-    else:
+    if readSavedCredentials() or ( not settingsJson.key1 == "na" ):
         return True
+    else:
+        return False
 
 def searchUnits():
     unitTypeInt = 0

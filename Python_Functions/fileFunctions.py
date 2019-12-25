@@ -17,3 +17,6 @@ def internet_on():
             return True
         except: pass
     return False
+
+def deleteFile(fileLoc):
+    os.remove(fileLoc)

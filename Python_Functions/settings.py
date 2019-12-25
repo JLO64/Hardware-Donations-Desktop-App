@@ -1,9 +1,9 @@
-import terminalColor, fileFunctions, settingsJson
+import terminalColor, fileFunctions, settingsJson, browseDatabase
 import json, os
 
 def changeSettings():
     intDecision = 0
-    listOfOptions =[". GUI Mode", ". Color Mode", ". Version Info", ". Cancel"]
+    listOfOptions =[". GUI Mode", ". Color Mode", ". Login", ". Version Info", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
             print("\nWhat settings do you want to change?")
@@ -20,6 +20,12 @@ def changeSettings():
             elif ( listOfOptions[intDecision-1] == ". Color Mode"):
                 intDecision = 0
                 changeColor()
+            elif ( listOfOptions[intDecision-1] == ". Login"):
+                intDecision = 0
+                if not browseDatabase.hasValidCredStored():
+                    browseDatabase.askForCredentials()
+                else:
+                    logoutOfAccount()
             elif ( listOfOptions[intDecision-1] == ". Version Info"):
                 intDecision = 0
                 print("\nHardware-Donations Desktop App\nVersion Pre-Production\nBuilt With Python 3.6.9\n")
@@ -110,3 +116,22 @@ def initializeSettings():
     if( not data == {} ):
         if(not settingsJson.guiMode == False): settingsJson.guiMode = data["GUImode"]
         settingsJson.colorMode = data["colorMode"]
+
+def logoutOfAccount():
+    intlogoutDecision = 0
+    listOfLogoutOptions =[". Yes", ". No"]
+    while intlogoutDecision == 0:
+        print("Do you want to logout of your account?")
+        for i in range( len(listOfLogoutOptions) ):
+            terminalColor.printBlueString( str(i+1) + listOfLogoutOptions[i] )
+        intlogoutDecision = int(input())
+        if ( (intlogoutDecision < 1) or (intlogoutDecision > len(listOfLogoutOptions)) ):
+            terminalColor.printRedString("Invalid Input")
+        elif ( listOfLogoutOptions[intlogoutDecision-1] == ". No"): #Exit program
+            pass
+        elif ( listOfLogoutOptions[intlogoutDecision-1] == ". Yes"):
+            settingsJson.key1 = "na"
+            settingsJson.key2 = "na"
+            settingsJson.key3 = "na"
+            fileFunctions.deleteFile(os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo")
+            terminalColor.printGreenString("SETTINGS UPDATED")
