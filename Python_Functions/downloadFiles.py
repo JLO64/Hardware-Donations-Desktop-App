@@ -1,7 +1,9 @@
 import os, sys, json, urllib.request
 import terminalColor, fileFunctions, settingsJson
 import array as arr
-try: from tkinter import *
+try:
+    from tkinter import *
+    from tkinter import filedialog
 except:
     settingsJson.guiMode = False
     pass
@@ -11,11 +13,9 @@ def downloadFilesMain():
     readFileList()
 
 def downloadFilesList():
-    fileFunctions.checkForDirectory( os.path.expanduser('~') + "/HardwareDonations/Download_Links" )
-
     terminalColor.printGreenString("\nDownloading list of files")
-    url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/DownloadList.txt"
-    urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt" )
+    url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/DownloadList"
+    urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Settings/DownloadList" )
     terminalColor.printGreenString("Download Finished")
 
 def chooseFolderToSaveFile( downloadInfo ):
@@ -36,6 +36,8 @@ def chooseFolderToSaveFile( downloadInfo ):
                 options['filetypes'] = [('pdf files', '.pdf')]
             elif( downloadInfo[2] == ".zip" ):
                 options['filetypes'] = [('zip files', '.zip')]
+            elif( downloadInfo[2] == ".png" ):
+                options['filetypes'] = [('png files', '.png')]
 
             if( downloadInfo[3] == "PDFs" ):
                 options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
@@ -59,7 +61,7 @@ def chooseFolderToSaveFile( downloadInfo ):
                 else:
                     validDirPath = True
         if ( len(fileLoc) > 0 ) and not (fileLoc.lower() == "cancel"):
-            fileLoc = fileLoc + downloadInfo[1] + downloadInfo[2]
+            fileLoc = fileLoc
             urllib.request.urlretrieve(downloadInfo[0], fileLoc )
             terminalColor.printGreenString("DOWNLOAD FINISHED")
             print("File Saved To: " + fileLoc)
@@ -67,7 +69,7 @@ def chooseFolderToSaveFile( downloadInfo ):
             terminalColor.printRedString("DOWNLOAD CANCELED")
 
 def readFileList():
-    with open(os.path.expanduser('~') + "/HardwareDonations/Download_Links/DownloadList.txt", 'r') as myfile:
+    with open(os.path.expanduser('~') + "/HardwareDonations/Settings/DownloadList", 'r') as myfile:
         data=myfile.read()
     obj = json.loads(data)
 
@@ -127,7 +129,6 @@ def chooseFileToDownload( obj, typeOfDownload):
                 nameToDownload = downloadName[intDecision - 1]
                 extensionToDownload = downloadExtension[intDecision - 1]
                 categoryToDownload = downloadCategory[intDecision - 1]
-
                 chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
         except:
             intDecision = 0

@@ -13,6 +13,7 @@ def loginToAWS():
 
 def askForCredentials(): #Ask user for login info
     hasValidCred = False
+    
     while(not hasValidCred):
         try:
             print("\nPlease type your Hardware Donations Username and Password.(Type \"Cancel\" to exit)\nUsername:", end=" ")
@@ -41,7 +42,8 @@ def checkCredentials(credentials): #Connect to AWS Lambda to check login
         settingsJson.key1 = passTest.get('key1')
         settingsJson.key2 = passTest.get('key2')
         settingsJson.key3 = passTest.get('key3')
-    return passTest.get('result')
+        return True
+    else: return False
 
 def selectCategory():
     intDecision = 0
