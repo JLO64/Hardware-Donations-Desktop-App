@@ -5,33 +5,37 @@ lambda_client = boto3.client('lambda')
 
 def loginToAWS():
     if not hasValidCredStored():
-        askForCredentials()
+        if askForCredentials(): selectCategory()
     else:
         hasValidCred = checkCredentials(dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="verify_key"))
         if hasValidCred: selectCategory()
-        while not hasValidCred:
+        else:
             hasValidCred = askForCredentials()
 
 def askForCredentials(): #Ask user for login info
     hasValidCred = False
-
-    while(not hasValidCred):
+    wantsToCancel = False
+    while(not hasValidCred and not wantsToCancel):
         try:
             print("\nPlease type your Hardware Donations Username and Password.(Type \"Cancel\" to exit)\nUsername:", end=" ")
             username = str(input())
-            if username.lower()=="cancel": break
+            if username.lower()=="cancel":
+                wantsToCancel = True
+                break
             password = getpass.getpass(prompt="Password(Input Hidden): ")
-            if password.lower()=="cancel": break
+            if password.lower()=="cancel":
+                wantsToCancel = True
+                break
             hasValidCred = checkCredentials(dict(username=username, password=password, type="verify_password"))
             if hasValidCred:
                 askToSaveLoginInfo()
-                selectCategory()
                 return True
             else:
                 terminalColor.printRedString("Login Failed")
                 return False
         except:
             terminalColor.printRedString("Invalid Input")
+    return False
 
 
 def checkCredentials(credentials): #Connect to AWS Lambda to check login

@@ -3,7 +3,7 @@ import json, os
 
 def changeSettings():
     intDecision = 0
-    listOfOptions =[". GUI Mode", ". Color Mode", ". Login", ". Version Info", ". Cancel"]
+    listOfOptions =[". GUI Mode", ". Color Mode", ". Account Settings", ". Version Info", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
             print("\nWhat settings do you want to change?")
@@ -20,12 +20,10 @@ def changeSettings():
             elif ( listOfOptions[intDecision-1] == ". Color Mode"):
                 intDecision = 0
                 changeColor()
-            elif ( listOfOptions[intDecision-1] == ". Login"):
+            elif ( listOfOptions[intDecision-1] == ". Account Settings"):
                 intDecision = 0
-                if not browseDatabase.hasValidCredStored():
-                    browseDatabase.askForCredentials()
-                else:
-                    logoutOfAccount()
+                if browseDatabase.hasValidCredStored(): accountSettings(False)
+                else: accountSettings(True)
             elif ( listOfOptions[intDecision-1] == ". Version Info"):
                 intDecision = 0
                 print("\nHardware-Donations Desktop App\nVersion Pre-Production\nBuilt With Python 3.6.9\n")
@@ -135,3 +133,25 @@ def logoutOfAccount():
             settingsJson.key3 = "na"
             fileFunctions.deleteFile(os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo")
             terminalColor.printGreenString("SETTINGS UPDATED")
+
+def accountSettings(isLoggedOut):
+    if isLoggedOut:
+        isLoggedOut = not browseDatabase.askForCredentials()
+    if not isLoggedOut:
+        intDecision = 0
+        listOfOptions =[". Logout", ". Change Password", ". Cancel"]
+        while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
+            try:
+                print("\nWhat settings do you want to change?")
+                for i in range( len(listOfOptions) ):
+                    terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
+                intDecision = int(input())
+                if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ):
+                    terminalColor.printRedString("Invalid Input")
+                elif ( listOfOptions[intDecision-1] == ". Cancel"): #Exit program
+                    break
+                elif ( listOfOptions[intDecision-1] == ". Logout"):
+                    logoutOfAccount()
+            except:
+                intDecision = 0
+                terminalColor.printRedString("Invalid Input")
