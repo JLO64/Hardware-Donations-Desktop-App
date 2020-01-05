@@ -1,5 +1,9 @@
 # Hardware Donations Desktop App
 
+## Clone The Repository (Linux)
+
+On Linux to clone the repository open the terminal and go to the directory where you wish to clone(download) it. Then type```git clone https://github.com/JLO64/Hardware-Donations-Desktop-App.git```
+
 ## Install Dependencies
 
 First make sure that you have Python3 installed.  On linux you can just type ```python3``` into the terminal and it will show you what version you have of it installed.
