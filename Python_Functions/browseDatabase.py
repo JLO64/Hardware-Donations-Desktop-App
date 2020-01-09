@@ -101,7 +101,16 @@ def searchUnits():
             terminalColor.printRedString("Invalid Input")
 
 def getUnitInfo(unitID):
-    print(unitID)
+    payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_info", unitID=unitID)
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+        InvocationType='RequestResponse',
+        Payload=json.dumps(payload),
+    )
+    responseJson=json.loads(response['Payload'].read())
+    unitInfo=responseJson["unitInfo"]
+    for x in unitInfo:
+        print(x)
 
 def askToSaveLoginInfo():
     saveChoice = 0
