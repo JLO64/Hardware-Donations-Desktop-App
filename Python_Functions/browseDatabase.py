@@ -95,8 +95,11 @@ def searchUnits():
             print("\nWhat unit number do you want to search for?")
             unitNumInt = int(input())
             unitID = unitType + "-" + str(unitNumInt)
-            unitInfo = getUnitInfo(unitID)
-            printUnitInfo(unitInfo, unitType, unitNumInt)
+            responseJson = getUnitInfo(unitID)
+            if (responseJson["result"] == True ):
+                printUnitInfo(responseJson, unitType, unitNumInt)
+            else:
+                terminalColor.printRedString("unable to find unit")
         except:
             unitTypeInt = 0
             terminalColor.printRedString("Invalid Input")
@@ -109,10 +112,10 @@ def getUnitInfo(unitID):
         Payload=json.dumps(payload),
     )
     responseJson = json.loads(response['Payload'].read())
-    unitInfo = responseJson["unitInfo"]
-    return unitInfo
+    return responseJson
 
-def printUnitInfo(unitInfo, unitType, unitNumInt):
+def printUnitInfo(responseJson, unitType, unitNumInt):
+    unitInfo = responseJson["unitInfo"]
     print("\nInfo Page For " + unitType + "-" + str(unitNumInt) )
     print(" " + unitType + "-" + str(unitNumInt) )
     print( "  Unit Category: " + unitInfo["Category"])
