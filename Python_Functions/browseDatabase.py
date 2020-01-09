@@ -95,7 +95,8 @@ def searchUnits():
             print("\nWhat unit number do you want to search for?")
             unitNumInt = int(input())
             unitID = unitType + "-" + str(unitNumInt)
-            getUnitInfo(unitID)
+            unitInfo = getUnitInfo(unitID)
+            printUnitInfo(unitInfo, unitType, unitNumInt)
         except:
             unitTypeInt = 0
             terminalColor.printRedString("Invalid Input")
@@ -107,10 +108,28 @@ def getUnitInfo(unitID):
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
     )
-    responseJson=json.loads(response['Payload'].read())
-    unitInfo=responseJson["unitInfo"]
-    for x in unitInfo:
-        print(x)
+    responseJson = json.loads(response['Payload'].read())
+    unitInfo = responseJson["unitInfo"]
+    return unitInfo
+
+def printUnitInfo(unitInfo, unitType, unitNumInt):
+    print("\nInfo Page For " + unitType + "-" + str(unitNumInt) )
+    print(" " + unitType + "-" + str(unitNumInt) )
+    print( "  Unit Category: " + unitInfo["Category"])
+    print( "  Unit Number: " + str(unitNumInt) )
+    print( "  Location: " + unitInfo["Location"])
+    print( "  Status: " + unitInfo["Status"])
+    print( "  User ID: " + unitInfo["UserID"])
+    print( " System Info")
+    print( "  Manufacturer: " + unitInfo["Manufacturer"])
+    print( "  Model: " + unitInfo["Model"])
+    print( "  ARK-OS Version: " + unitInfo["ARK-OS_Version"])
+    print( "  Original Operating System: " + unitInfo["Operating System"])
+    print( " CPU")
+    print( "  CPU Model: " + unitInfo["CPU Type"])
+    print( "  CPU GHz: " + unitInfo["CPU GHz"])
+    print( "  CPU Threads: " + unitInfo["CPU Threads"])
+    print( "  CPU Architecture: " + unitInfo["CPU Architecture"])
 
 def askToSaveLoginInfo():
     saveChoice = 0
