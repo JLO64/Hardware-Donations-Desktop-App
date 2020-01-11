@@ -1,3 +1,4 @@
 request
 PyInstaller
 boto3
+click

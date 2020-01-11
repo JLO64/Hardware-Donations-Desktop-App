@@ -1,4 +1,4 @@
-import boto3, json, getpass, os
+import boto3, json, getpass, os, click
 import terminalColor, settingsJson, fileFunctions
 
 lambda_client = boto3.client('lambda')
@@ -98,6 +98,7 @@ def searchUnits():
             responseJson = getUnitInfo(unitID)
             if (responseJson["result"] == True ):
                 printUnitInfo(responseJson, unitType, unitNumInt)
+                unitEditOptions(responseJson)
             else:
                 terminalColor.printRedString("unable to find unit")
         except:
@@ -148,6 +149,60 @@ def printUnitInfo(responseJson, unitType, unitNumInt):
     print( terminalColor.generateYellowString( "  External Disk Drives: " ) + unitInfo["Disk Drive"])
     print( terminalColor.generateYellowString( "  Networking: " ) + unitInfo["Networking"])
     print( terminalColor.generateYellowString( "  Other Ports: " ) + unitInfo["Ports"])
+    terminalColor.printCyanString( " Comments")
+    terminalColor.printYellowString( "  " + unitInfo["Comments"])
+
+def unitEditOptions(responseJson):
+    intDecision = 0
+    listOfOptions =[". Edit Entry", ". Exit"]
+    while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
+        try:
+            print("\nWhat do you want to do?")
+            for i in range( len(listOfOptions) ): terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". Exit"): break
+            elif ( listOfOptions[intDecision-1] == ". Edit Entry"):
+                intDecision = 0
+                unitEditEntry(responseJson)
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+
+def unitEditEntry(responseJson):
+    unitInfo = responseJson["unitInfo"]
+    intDecision = 0
+    listOfOptions =[". Comments", ". Exit", ". Save and Exit"]
+    stuffToUpdate = {}
+    changesMade = False
+    while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
+        try:
+            print("\nWhat section do you want to edit?")
+            for i in range( len(listOfOptions) - 1): terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
+            if changesMade: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] )
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". Exit" ): break
+            elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and changesMade: uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
+            elif ( listOfOptions[intDecision-1] == ". Comments"):
+                intDecision = 0
+                oldComments = unitInfo["Comments"]
+                newComments = click.edit(oldComments)
+                stuffToUpdate["Comments"] = newComments
+                if oldComments != newComments: changesMade = True
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+
+def uploadUnitUpdate(stuffToUpdate, unitID):
+    payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_update", unitID=unitID, updateInfo=stuffToUpdate)
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+        InvocationType='RequestResponse',
+        Payload=json.dumps(payload),
+    )
+    passTest=json.loads(response['Payload'].read())
+    print(passTest)
 
 def askToSaveLoginInfo():
     saveChoice = 0

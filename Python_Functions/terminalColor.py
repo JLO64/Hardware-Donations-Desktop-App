@@ -28,6 +28,10 @@ def printCyanString( stringToPrint ):
     if settingsJson.colorMode == True: print( bcolors.CYAN + stringToPrint + bcolors.ENDC )
     else: print(stringToPrint)
 
+def printYellowString( stringToPrint ):
+    if settingsJson.colorMode == True: print( bcolors.YELLOW + stringToPrint + bcolors.ENDC )
+    else: print(stringToPrint)
+
 def generateRedString( stringToPrint ):
     if settingsJson.colorMode == True: return bcolors.RED + stringToPrint.upper() + bcolors.ENDC 
     else: return(stringToPrint.upper())
