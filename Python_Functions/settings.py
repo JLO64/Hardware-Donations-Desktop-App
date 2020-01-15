@@ -26,7 +26,7 @@ def changeSettings():
                 else: accountSettings(True)
             elif ( listOfOptions[intDecision-1] == ". Version Info"):
                 intDecision = 0
-                print("\nHardware-Donations Desktop App\nVersion Pre-Production\nBuilt With Python 3.6.9\n")
+                print("\nHardware-Donations Desktop App\nVersion " + settingsJson.versionNum + "\nBuilt With Python 3.6.9")
             else:
                 intDecision = 0    
         except:

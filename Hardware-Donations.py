@@ -2,18 +2,22 @@ import os, sys, glob, webbrowser, io, time
 sys.path.append("Python_Functions")
 import terminalColor, downloadFiles, fileFunctions, settings, settingsJson, browseDatabase
 
-
-terminalColor.printGreenString("STARTING PROGRAM...")
-fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations")
-settings.initializeSettings()
-terminalColor.printGreenString("SETTINGS LOADED!")
-
 #os.system("./ARK-OS_Installer")
 #print(glob.glob("ARK-OS/*")) #list files
 
+def printARKDino():
+    arkDino = "\n     ╓╫╫╫╫╫╫╫╫╓\n     ╫╫╫╫╫╫╫╫╫╫\n     ╙╫╫╫╫╫╫╫╫╫\n          ╫╫╫╫╫\n          ╫╫╫╫╫╥\n          ╫╫╫╫╫╫╦╕\n        ╙╙╫╫╫╫╫╫╫╫╫╦        ╦\n           ║╫╫╫╫╫╫╫╫╫╦╥  ╓╥╫╫\n             ╩╫╫╫╫╫╫╫╫╫╫╫╫╫╫\n              └╫╫╫╫╫╫╫╫╫╫╫╩└\n                ╞╫╫╙╫╫╫╙\n               ╥║╡  ╥║╫\n"
+    print(arkDino + "\nHardware Donations Desktop App " + str(settingsJson.versionNum))
+
 if __name__ == "__main__":
+    terminalColor.printGreenString("STARTING PROGRAM...")
+    fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations")
+    settings.initializeSettings()
+    terminalColor.printGreenString("SETTINGS LOADED!")
+    printARKDino()
+
     intDecision = 0
-    listOfOptions =[". Install ARK-OS", ". Browse Database", ". Download Files", ". Go To Youtube Channel", ". Settings", ". Exit"]
+    listOfOptions =[". Install ARK-OS", ". Access Database", ". Download Files", ". Go To Youtube Channel", ". Settings", ". Exit"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
             print("\nWhat do you want to do?")

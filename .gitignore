@@ -5,3 +5,4 @@ Python_Functions/awsPolly.py
 build/*
 __pycache__/*
 Hardware-Donations.spec
+dist/*
