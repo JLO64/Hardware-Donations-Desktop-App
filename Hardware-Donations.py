@@ -7,7 +7,7 @@ import terminalColor, downloadFiles, fileFunctions, settings, settingsJson, brow
 
 def printARKDino():
     arkDino = "\n     ╓╫╫╫╫╫╫╫╫╓\n     ╫╫╫╫╫╫╫╫╫╫\n     ╙╫╫╫╫╫╫╫╫╫\n          ╫╫╫╫╫\n          ╫╫╫╫╫╥\n          ╫╫╫╫╫╫╦╕\n        ╙╙╫╫╫╫╫╫╫╫╫╦        ╦\n           ║╫╫╫╫╫╫╫╫╫╦╥  ╓╥╫╫\n             ╩╫╫╫╫╫╫╫╫╫╫╫╫╫╫\n              └╫╫╫╫╫╫╫╫╫╫╫╩└\n                ╞╫╫╙╫╫╫╙\n               ╥║╡  ╥║╫\n"
-    print(arkDino + "\nHardware Donations Desktop App " + str(settingsJson.versionNum))
+    print(arkDino + "\nHardware Donations Desktop App " + str(settingsJson.versionNum) + "\n\n")
 
 if __name__ == "__main__":
     terminalColor.printGreenString("STARTING PROGRAM...")
@@ -33,7 +33,7 @@ if __name__ == "__main__":
                 intDecision = 0
                 if (fileFunctions.internet_on() == True): downloadFiles.downloadFilesMain()
                 else: terminalColor.printRedString("Unable to connect to internet")
-            elif ( listOfOptions[intDecision-1] == ". Browse Database"):
+            elif ( listOfOptions[intDecision-1] == ". Access Database"):
                 intDecision = 0
                 if (fileFunctions.internet_on() == True): browseDatabase.loginToAWS()
                 else: terminalColor.printRedString("Unable to connect to internet")
