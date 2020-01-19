@@ -33,7 +33,7 @@ def unitEditOptions(responseJson, unitID):
 def unitEditEntry(responseJson):
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
-    listOfOptions =[". Comments", ". Exit", ". Save and Exit"]
+    listOfOptions =[". Location", ". Status", ". Comments", ". Exit", ". Save and Exit"]
     stuffToUpdate = {}
     changesMade = False
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
@@ -56,6 +56,29 @@ def unitEditEntry(responseJson):
                 newComments = click.edit(oldComments)
                 stuffToUpdate["Comments"] = newComments
                 if oldComments != newComments: changesMade = True
+            elif ( listOfOptions[intDecision-1] == ". Location"):
+                intDecision = 0
+                try: oldLocation = stuffToUpdate["Location"]
+                except: oldLocation = unitInfo["Location"]
+                newLocation = changeUnitLocation()
+                stuffToUpdate["Location"] = newLocation
+                if oldLocation != newLocation: changesMade = True
+            elif ( listOfOptions[intDecision-1] == ". Status"):
+                intDecision = 0
+                try: oldStatus = stuffToUpdate["Status"]
+                except: oldStatus = unitInfo["Status"]
+                newStatus = click.edit(oldStatus)
+                newStatus = newStatus.replace('\n', '')
+                stuffToUpdate["Status"] = newStatus
+                if oldStatus != newStatus: changesMade = True
+            elif ( listOfOptions[intDecision-1] == ". User ID"):
+                intDecision = 0
+                try: oldUserID = stuffToUpdate["UserID"]
+                except: oldUserID = unitInfo["UserID"]
+                newUserID = click.edit(oldUserID)
+                newUserID = newUserID.replace('\n', '')
+                stuffToUpdate["UserID"] = newUserID
+                if oldUserID != newUserID: changesMade = True
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -132,3 +155,17 @@ def createNewUnitLabel(unitID):
     )
     passTest=json.loads(response['Payload'].read())
     labelURL=passTest["qrLabelURL"]
+
+def changeUnitLocation():
+    unitLocations = ["Unknown","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)","Donated"]
+    intDecision = 0
+    while ( (intDecision < 1 ) or (intDecision > len(unitLocations)) ):
+        try:
+            print("\nWhere is this unit located?")
+            for i in range( len(unitLocations) - 1): terminalColor.printBlueString( str(i+1) + ". " + unitLocations[i])
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(unitLocations)) ): terminalColor.printRedString("Invalid Input")
+            else: return unitLocations[intDecision - 1]
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
