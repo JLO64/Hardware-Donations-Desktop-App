@@ -1,4 +1,11 @@
+import settingsJson, terminalColor
 import sys, os, urllib.request
+try:
+    from tkinter import *
+    from tkinter import filedialog
+except:
+    settingsJson.guiMode = False
+    pass
 
 def checkForDirectory(programPath): #checks for "programPath" directory and creates it if not found
     if not os.path.exists(programPath):
@@ -20,3 +27,55 @@ def internet_on():
 
 def deleteFile(fileLoc):
     os.remove(fileLoc)
+
+def chooseFolderToSaveFile( downloadInfo ):
+    if(downloadInfo[1] == "none" ):
+        return
+    else:
+        fileLoc = ""
+        if( settingsJson.guiMode == True ):
+            root = Tk()
+            root.withdraw()
+            options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
+            options['title'] = "Download As"
+            options['initialfile'] = downloadInfo[1]
+            
+            if( downloadInfo[2] == ".txt" ):
+                options['filetypes'] = [('text files', '.txt')]
+            elif( downloadInfo[2] == ".pdf" ):
+                options['filetypes'] = [('pdf files', '.pdf')]
+            elif( downloadInfo[2] == ".zip" ):
+                options['filetypes'] = [('zip files', '.zip')]
+            elif( downloadInfo[2] == ".png" ):
+                options['filetypes'] = [('png files', '.png')]
+
+            if( downloadInfo[3] == "PDFs" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
+            elif( downloadInfo[3] == "Legal" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
+            elif( downloadInfo[3] == "Photos" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
+            elif( downloadInfo[3] == "Wallpapers" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Wallpapers")
+            elif( downloadInfo[3] == "Labels" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Labels")
+                
+            fileLoc = filedialog.asksaveasfilename(**options)
+        elif(settingsJson.guiMode == False):
+            validDirPath = False
+            while validDirPath == False:
+                print("Please type the path of the directory you want to save to.(Or type \"Cancel\")")
+                fileLoc = str(input())
+                if fileLoc.lower() == "cancel":
+                    break
+                elif not ( "/" == fileLoc[-1] and os.path.exists(fileLoc) ):
+                    terminalColor.printRedString("Invalid directory")
+                else:
+                    validDirPath = True
+        if ( len(fileLoc) > 0 ) and not (fileLoc.lower() == "cancel"):
+            fileLoc = fileLoc
+            urllib.request.urlretrieve(downloadInfo[0], fileLoc )
+            terminalColor.printGreenString("DOWNLOAD FINISHED")
+            print("File Saved To: " + fileLoc)
+        else:
+            terminalColor.printRedString("DOWNLOAD CANCELED")

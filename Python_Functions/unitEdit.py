@@ -1,11 +1,12 @@
 import boto3, json, getpass, os, click
 import terminalColor, settingsJson, fileFunctions, unitEdit
+import array as arr
 
 lambda_client = boto3.client('lambda')
 
 def unitEditOptions(responseJson, unitID):
     intDecision = 0
-    listOfOptions =[". Edit Entry", ". Exit"]
+    listOfOptions =[". Edit Entry", ". Download Unit Label", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             printUnitInfo(responseJson, unitID)
@@ -14,8 +15,17 @@ def unitEditOptions(responseJson, unitID):
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit"): break
-            elif ( listOfOptions[intDecision-1] == ". Edit Entry"):
-                unitEditEntry(responseJson)
+            elif ( listOfOptions[intDecision-1] == ". Edit Entry"): unitEditEntry(responseJson)
+            elif ( listOfOptions[intDecision-1] == ". Download Unit Label"):
+                intDecision = 0
+                try:
+                    downloadUnitLabel(unitID)
+                except:
+                    try:
+                        createNewUnitLabel(unitID)
+                        downloadUnitLabel(unitID)
+                    except:
+                        terminalColor.printRedString("Unable to download unit label")
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -41,10 +51,8 @@ def unitEditEntry(responseJson):
                 break
             elif ( listOfOptions[intDecision-1] == ". Comments"):
                 intDecision = 0
-                try:
-                    oldComments = stuffToUpdate["Comments"]
-                except:
-                    oldComments = unitInfo["Comments"]
+                try: oldComments = stuffToUpdate["Comments"]
+                except: oldComments = unitInfo["Comments"]
                 newComments = click.edit(oldComments)
                 stuffToUpdate["Comments"] = newComments
                 if oldComments != newComments: changesMade = True
@@ -101,3 +109,26 @@ def printUnitInfo(responseJson, unitID):
         print( terminalColor.generateCyanString( " Comments: ") + unitInfo["Comments"])
     except:
         terminalColor.printRedString("Unable to print all data")
+
+def downloadUnitLabel(unitID):
+    #https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Unit_Photos/HDD_Units/HDD-3/HDD-3_QR_Label.png
+    awsURL = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Unit_Photos/"
+    unitType = unitID.split("-",1)[0]
+    unitLabelUrl = awsURL + unitType + "_Units/" + unitID + "/" + unitID + "_QR_Label.png"
+    urlToDownload = unitLabelUrl
+    nameToDownload = unitID + " Label"
+    extensionToDownload = ".png"
+    categoryToDownload = "Labels"
+    fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
+
+def createNewUnitLabel(unitID):
+    itemType = unitType = unitID.split("-",1)[0]
+    itemNumber = unitType = unitID.split("-",1)[1]
+    payload = dict(itemType=itemType, itemNumber=itemNumber)
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDLabelGenerator',
+        InvocationType='RequestResponse',
+        Payload=json.dumps(payload),
+    )
+    passTest=json.loads(response['Payload'].read())
+    labelURL=passTest["qrLabelURL"]

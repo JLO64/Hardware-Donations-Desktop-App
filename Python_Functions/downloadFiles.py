@@ -1,12 +1,6 @@
 import os, sys, json, urllib.request
 import terminalColor, fileFunctions, settingsJson
 import array as arr
-try:
-    from tkinter import *
-    from tkinter import filedialog
-except:
-    settingsJson.guiMode = False
-    pass
 
 def downloadFilesMain():
     downloadFilesList()
@@ -17,56 +11,6 @@ def downloadFilesList():
     url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/DownloadList"
     urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Settings/DownloadList" )
     terminalColor.printGreenString("Download Finished")
-
-def chooseFolderToSaveFile( downloadInfo ):
-    if(downloadInfo[1] == "none" ):
-        return
-    else:
-        fileLoc = ""
-        if( settingsJson.guiMode == True ):
-            root = Tk()
-            root.withdraw()
-            options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
-            options['title'] = "Download As"
-            options['initialfile'] = downloadInfo[1]
-            
-            if( downloadInfo[2] == ".txt" ):
-                options['filetypes'] = [('text files', '.txt')]
-            elif( downloadInfo[2] == ".pdf" ):
-                options['filetypes'] = [('pdf files', '.pdf')]
-            elif( downloadInfo[2] == ".zip" ):
-                options['filetypes'] = [('zip files', '.zip')]
-            elif( downloadInfo[2] == ".png" ):
-                options['filetypes'] = [('png files', '.png')]
-
-            if( downloadInfo[3] == "PDFs" ):
-                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
-            elif( downloadInfo[3] == "Legal" ):
-                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Legal_Files")
-            elif( downloadInfo[3] == "Photos" ):
-                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Photos")
-            elif( downloadInfo[3] == "Wallpapers" ):
-                options['initialdir'] = fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Wallpapers")
-                
-            fileLoc = filedialog.asksaveasfilename(**options)
-        elif(settingsJson.guiMode == False):
-            validDirPath = False
-            while validDirPath == False:
-                print("Please type the path of the directory you want to save to.(Or type \"Cancel\")")
-                fileLoc = str(input())
-                if fileLoc.lower() == "cancel":
-                    break
-                elif not ( "/" == fileLoc[-1] and os.path.exists(fileLoc) ):
-                    terminalColor.printRedString("Invalid directory")
-                else:
-                    validDirPath = True
-        if ( len(fileLoc) > 0 ) and not (fileLoc.lower() == "cancel"):
-            fileLoc = fileLoc
-            urllib.request.urlretrieve(downloadInfo[0], fileLoc )
-            terminalColor.printGreenString("DOWNLOAD FINISHED")
-            print("File Saved To: " + fileLoc)
-        else:
-            terminalColor.printRedString("DOWNLOAD CANCELED")
 
 def readFileList():
     with open(os.path.expanduser('~') + "/HardwareDonations/Settings/DownloadList", 'r') as myfile:
@@ -129,7 +73,7 @@ def chooseFileToDownload( obj, typeOfDownload):
                 nameToDownload = downloadName[intDecision - 1]
                 extensionToDownload = downloadExtension[intDecision - 1]
                 categoryToDownload = downloadCategory[intDecision - 1]
-                chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
+                fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
