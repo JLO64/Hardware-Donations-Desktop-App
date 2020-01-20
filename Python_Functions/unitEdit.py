@@ -33,7 +33,7 @@ def unitEditOptions(responseJson, unitID):
 def unitEditEntry(responseJson):
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
-    listOfOptions =[". Location", ". Status", ". Comments", ". Exit", ". Save and Exit"]
+    listOfOptions =[". Location", ". Status", ". User ID",". Manufacturer", ". Comments", ". Exit", ". Save and Exit"]
     stuffToUpdate = {}
     changesMade = False
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
@@ -47,8 +47,16 @@ def unitEditEntry(responseJson):
                 unitEditOptions(responseJson, unitInfo["Unit_ID"])
                 break
             elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and changesMade:
-                uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
-                break
+                for x in stuffToUpdate:
+                    data = stuffToUpdate[x]
+                    print(terminalColor.generateYellowString(x) + ": " + data )
+                print("\nDo you want to want to upload these changes?[Yes/No]")
+                strDecision = input()
+                if strDecision.lower() == "yes" or strDecision.lower() == "y":
+                    uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
+                    break
+                else:
+                    intDecision = 0
             elif ( listOfOptions[intDecision-1] == ". Comments"):
                 intDecision = 0
                 try: oldComments = stuffToUpdate["Comments"]
@@ -79,6 +87,14 @@ def unitEditEntry(responseJson):
                 newUserID = newUserID.replace('\n', '')
                 stuffToUpdate["UserID"] = newUserID
                 if oldUserID != newUserID: changesMade = True
+            elif ( listOfOptions[intDecision-1] == ". Manufacturer"):
+                intDecision = 0
+                try: oldManufacturer = stuffToUpdate["Manufacturer"]
+                except: oldManufacturer = unitInfo["Manufacturer"]
+                newManufacturer = click.edit(oldManufacturer)
+                newManufacturer = newManufacturer.replace('\n', '')
+                stuffToUpdate["Manufacturer"] = newManufacturer
+                if oldManufacturer != newManufacturer: changesMade = True
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
