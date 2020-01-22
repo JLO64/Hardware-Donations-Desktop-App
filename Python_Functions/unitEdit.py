@@ -185,3 +185,12 @@ def changeUnitLocation():
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
+
+def editTextEntry(stuffToUpdate, unitInfo, category):
+    try: oldData = stuffToUpdate[category]
+    except: oldData = unitInfo[category]
+    newData = click.edit(oldData)
+    newData = newData.replace('\n', '')
+    stuffToUpdate[category] = newData
+    if oldManufacturer != newManufacturer: changesMade = True
+    return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)
