@@ -38,7 +38,7 @@ def chooseFolderToSaveFile( downloadInfo ):
             root.withdraw()
             options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
             options['title'] = "Download As"
-            options['initialfile'] = downloadInfo[1]
+            options['initialfile'] = downloadInfo[1] + downloadInfo[2]
             
             if( downloadInfo[2] == ".txt" ):
                 options['filetypes'] = [('text files', '.txt')]
