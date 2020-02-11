@@ -1,4 +1,4 @@
-import boto3, json, getpass, os, click
+import boto3, json, getpass, os, click, readline
 import terminalColor, settingsJson, fileFunctions, unitEdit
 import array as arr
 
@@ -313,10 +313,18 @@ def editTextEntry(stuffToUpdate, unitInfo, category):
     originalData = unitInfo[category]
     try: oldData = stuffToUpdate[category]
     except: oldData = unitInfo[category]
-    newData = click.edit(oldData)
+    #newData = click.edit(oldData)
     newData = newData.replace('\n', '')
+    newData = vimAlternative(oldData)
     stuffToUpdate[category] = newData
     if originalData == newData: changesMade = False
     elif oldData != newData: changesMade = True
     else: changesMade = False
     return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)
+
+def vimAlternative(input):
+    readline.set_startup_hook(lambda: readline.insert_text(""))
+    try:    
+        return input(input)  # or raw_input in Python 2
+    finally:
+        readline.set_startup_hook()
