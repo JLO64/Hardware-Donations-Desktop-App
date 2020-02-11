@@ -33,7 +33,7 @@ def unitEditOptions(responseJson, unitID):
 def unitEditEntry(responseJson):
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
-    listOfOptions =[". Location", ". Status", ". User ID",". Manufacturer", ". Comments", ". Exit", ". Save and Exit"]
+    listOfOptions =[". Location", ". Status", ". User ID",". Manufacturer",". Model",". ARK-OS Version", ". Original Operating System", ". CPU Model", ". CPU GHz",". CPU Threads",". CPU Architecture",". RAM GB",". RAM Slots",". RAM Type", ". HDD GB", ". Comments", ". Exit", ". Save and Exit"]
     stuffToUpdate = {}
     changesMade = False
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
@@ -73,28 +73,109 @@ def unitEditEntry(responseJson):
                 if oldLocation != newLocation: changesMade = True
             elif ( listOfOptions[intDecision-1] == ". Status"):
                 intDecision = 0
-                try: oldStatus = stuffToUpdate["Status"]
-                except: oldStatus = unitInfo["Status"]
-                newStatus = click.edit(oldStatus)
-                newStatus = newStatus.replace('\n', '')
-                stuffToUpdate["Status"] = newStatus
-                if oldStatus != newStatus: changesMade = True
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Status")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
             elif ( listOfOptions[intDecision-1] == ". User ID"):
                 intDecision = 0
-                try: oldUserID = stuffToUpdate["UserID"]
-                except: oldUserID = unitInfo["UserID"]
-                newUserID = click.edit(oldUserID)
-                newUserID = newUserID.replace('\n', '')
-                stuffToUpdate["UserID"] = newUserID
-                if oldUserID != newUserID: changesMade = True
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "UserID")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
             elif ( listOfOptions[intDecision-1] == ". Manufacturer"):
                 intDecision = 0
-                try: oldManufacturer = stuffToUpdate["Manufacturer"]
-                except: oldManufacturer = unitInfo["Manufacturer"]
-                newManufacturer = click.edit(oldManufacturer)
-                newManufacturer = newManufacturer.replace('\n', '')
-                stuffToUpdate["Manufacturer"] = newManufacturer
-                if oldManufacturer != newManufacturer: changesMade = True
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Manufacturer")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
+            elif ( listOfOptions[intDecision-1] == ". Model"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Model")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
+            elif ( listOfOptions[intDecision-1] == ". ARK-OS Version"):
+                intDecision = 0
+                originalData = unitInfo["ARK-OS_Version"]
+                try: oldData = stuffToUpdate["ARK-OS_Version"]
+                except: oldData = unitInfo["ARK-OS_Version"]
+                newData = changeARKOSVersion()
+                stuffToUpdate["ARK-OS_Version"] = newData
+                if originalData == newData: changesMade = False
+                elif oldData != newData: changesMade = True
+                else: changesMade = False
+            elif ( listOfOptions[intDecision-1] == ". Original Operating System"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Operating System")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
+            elif ( listOfOptions[intDecision-1] == ". CPU Model"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU Type")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
+            elif ( listOfOptions[intDecision-1] == ". CPU GHz"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU GHz")
+                try:
+                    stuffToUpdateCopy = arrayOfChanges["stuffToUpdate"]
+                    doubleTest = float(stuffToUpdateCopy["CPU GHz"])
+                    stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                    changesMade = arrayOfChanges["changesMade"]
+                except:
+                    terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". CPU Threads"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU Threads")
+                try:
+                    stuffToUpdateCopy = arrayOfChanges["stuffToUpdate"]
+                    intTest = int(stuffToUpdateCopy["CPU Threads"])
+                    stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                    changesMade = arrayOfChanges["changesMade"]
+                except:
+                    terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". CPU Architecture"):
+                intDecision = 0
+                originalData = unitInfo["CPU Architecture"]
+                try: oldData = stuffToUpdate["CPU Architecture"]
+                except: oldData = unitInfo["CPU Architecture"]
+                newData = changeCPUArchitecture()
+                stuffToUpdate["CPU Architecture"] = newData
+                if originalData == newData: changesMade = False
+                elif oldData != newData: changesMade = True
+                else: changesMade = False
+            elif ( listOfOptions[intDecision-1] == ". RAM GB"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "RAM")
+                try:
+                    stuffToUpdateCopy = arrayOfChanges["stuffToUpdate"]
+                    doubleTest = float(stuffToUpdateCopy["RAM"])
+                    stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                    changesMade = arrayOfChanges["changesMade"]
+                except:
+                    terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". RAM Slots"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "RAM Slots")
+                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                changesMade = arrayOfChanges["changesMade"]
+            elif ( listOfOptions[intDecision-1] == ". RAM Type"):
+                intDecision = 0
+                originalData = unitInfo["RAM Type"]
+                try: oldData = stuffToUpdate["RAM Type"]
+                except: oldData = unitInfo["RAM Type"]
+                newData = changeRAMType()
+                stuffToUpdate["RAM Type"] = newData
+                if originalData == newData: changesMade = False
+                elif oldData != newData: changesMade = True
+                else: changesMade = False
+            elif ( listOfOptions[intDecision-1] == ". HDD GB"):
+                intDecision = 0
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "HDD")
+                try:
+                    stuffToUpdateCopy = arrayOfChanges["stuffToUpdate"]
+                    doubleTest = int(stuffToUpdateCopy["HDD"])
+                    stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                    changesMade = arrayOfChanges["changesMade"]
+                except:
+                    terminalColor.printRedString("Invalid Input")
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -173,12 +254,12 @@ def createNewUnitLabel(unitID):
     labelURL=passTest["qrLabelURL"]
 
 def changeUnitLocation():
-    unitLocations = ["Unknown","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)","Donated"]
+    unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(unitLocations)) ):
         try:
             print("\nWhere is this unit located?")
-            for i in range( len(unitLocations) - 1): terminalColor.printBlueString( str(i+1) + ". " + unitLocations[i])
+            for i in range( len(unitLocations) ): terminalColor.printBlueString( str(i+1) + ". " + unitLocations[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(unitLocations)) ): terminalColor.printRedString("Invalid Input")
             else: return unitLocations[intDecision - 1]
@@ -186,11 +267,56 @@ def changeUnitLocation():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
+def changeARKOSVersion():
+    arkosVersions = ["Unknown","None","v1.0.6","v1.1.2","v1.2.1","v2.0.1 \"Bosco\"","v2.1.0 \"Bosco Tech\""]
+    intDecision = 0
+    while ( (intDecision < 1 ) or (intDecision > len(arkosVersions)) ):
+        try:
+            print("\nWhat version of ARK-OS does this unit have installed?")
+            for i in range( len(arkosVersions) ): terminalColor.printBlueString( str(i+1) + ". " + arkosVersions[i])
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(arkosVersions)) ): terminalColor.printRedString("Invalid Input")
+            else: return arkosVersions[intDecision - 1]
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+
+def changeCPUArchitecture():
+    cpuArchitectures = ["Unknown","64-Bit","32-Bit","PowerPC"]
+    intDecision = 0
+    while ( (intDecision < 1 ) or (intDecision > len(cpuArchitectures)) ):
+        try:
+            print("\nWhat CPU architecture does this unit have?")
+            for i in range( len(cpuArchitectures) ): terminalColor.printBlueString( str(i+1) + ". " + cpuArchitectures[i])
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(cpuArchitectures)) ): terminalColor.printRedString("Invalid Input")
+            else: return cpuArchitectures[intDecision - 1]
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+
+def changeRAMType():
+    ramType = ["Unknown","Other","DDR RAM","DDR2 RAM","DDR3 RAM","DDR4 RAM","DDR SDRAM","DDR2 SDRAM","DDR3 SDRAM","DDR4 SDRAM"]
+    intDecision = 0
+    while ( (intDecision < 1 ) or (intDecision > len(ramType)) ):
+        try:
+            print("\nWhat CPU architecture does this unit have?")
+            for i in range( len(ramType) ): terminalColor.printBlueString( str(i+1) + ". " + ramType[i])
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(ramType)) ): terminalColor.printRedString("Invalid Input")
+            else: return ramType[intDecision - 1]
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+
 def editTextEntry(stuffToUpdate, unitInfo, category):
+    originalData = unitInfo[category]
     try: oldData = stuffToUpdate[category]
     except: oldData = unitInfo[category]
     newData = click.edit(oldData)
     newData = newData.replace('\n', '')
     stuffToUpdate[category] = newData
-    if oldManufacturer != newManufacturer: changesMade = True
+    if originalData == newData: changesMade = False
+    elif oldData != newData: changesMade = True
+    else: changesMade = False
     return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)

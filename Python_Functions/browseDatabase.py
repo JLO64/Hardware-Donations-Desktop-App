@@ -93,6 +93,7 @@ def searchUnits():
             elif ( listOfUnitTypes[unitTypeInt-1] == ". HDL"): unitType = "HDL"
             elif ( listOfUnitTypes[unitTypeInt-1] == ". NX"): unitType = "NX"
             print("\nWhat unit number do you want to search for?")
+            print(unitType + "-", end="")
             unitNumInt = int(input())
             unitID = unitType + "-" + str(unitNumInt)
             responseJson = getUnitInfo(unitID)
