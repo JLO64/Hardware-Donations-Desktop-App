@@ -1,6 +1,7 @@
 import boto3, json, getpass, os, click, readline
 import terminalColor, settingsJson, fileFunctions, unitEdit
 import array as arr
+from pyautogui import typewrite
 
 lambda_client = boto3.client('lambda')
 
@@ -327,17 +328,17 @@ def editTextEntry(stuffToUpdate, unitInfo, category):
     try: oldData = stuffToUpdate[category]
     except: oldData = unitInfo[category]
     #newData = click.edit(oldData)
-    newData = newData.replace('\n', '')
-    newData = vimAlternative(oldData)
+    #newData = newData.replace('\n', '')
+    newData = typewrite(oldData)
     stuffToUpdate[category] = newData
     if originalData == newData: changesMade = False
     elif oldData != newData: changesMade = True
     else: changesMade = False
     return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)
 
-def vimAlternative(input):
-    readline.set_startup_hook(lambda: readline.insert_text(""))
-    try:    
-        return input(input)  # or raw_input in Python 2
-    finally:
-        readline.set_startup_hook()
+def vimAlternative(prompt, prefill=''):
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)  # or raw_input in Python 2
+   finally:
+      readline.set_startup_hook()
