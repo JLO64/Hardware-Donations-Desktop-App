@@ -334,8 +334,6 @@ def editTextEntry(stuffToUpdate, unitInfo, category):
     elif oldData != newData: changesMade = True
     else: changesMade = False
     return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)
-<<<<<<< HEAD
-=======
 
 def vimAlternative(input):
     readline.set_startup_hook(lambda: readline.insert_text(""))
@@ -343,4 +341,3 @@ def vimAlternative(input):
         return input(input)  # or raw_input in Python 2
     finally:
         readline.set_startup_hook()
->>>>>>> b91d5531117004ab91f728be804ed1b237ab799f
