@@ -37,8 +37,6 @@ def chooseFolderToSaveFile( downloadInfo ):
             root = Tk()
             root.withdraw()
             options = {} #https://www.programcreek.com/python/example/9924/tkFileDialog.asksaveasfilename
-            options['title'] = "Download As"
-            options['initialfile'] = downloadInfo[1] + downloadInfo[2]
             
             if( downloadInfo[2] == ".txt" ):
                 options['filetypes'] = [('text files', '.txt')]
@@ -48,6 +46,16 @@ def chooseFolderToSaveFile( downloadInfo ):
                 options['filetypes'] = [('zip files', '.zip')]
             elif( downloadInfo[2] == ".png" ):
                 options['filetypes'] = [('png files', '.png')]
+            elif( downloadInfo[2] == "unknown" ):
+                if ".png" in downloadInfo[0].lower():
+                    options['filetypes'] = [('png files', '.png')]
+                    downloadInfo[2] = ".png"
+                elif ".jpg" in downloadInfo[0].lower():
+                    options['filetypes'] = [('jpg files', '.jpg')]
+                    downloadInfo[2] = ".jpg"
+                elif ".jpeg" in downloadInfo[0].lower():
+                    options['filetypes'] = [('jpeg files', '.jpeg')]
+                    downloadInfo[2] = ".jpeg"
 
             if( downloadInfo[3] == "PDFs" ):
                 options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/PDF_Files")
@@ -59,7 +67,12 @@ def chooseFolderToSaveFile( downloadInfo ):
                 options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Wallpapers")
             elif( downloadInfo[3] == "Labels" ):
                 options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Labels")
+            elif( downloadInfo[3] == "Unit Photos" ):
+                options['initialdir'] = checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Unit_Photos")
                 
+            options['title'] = "Download As"
+            options['initialfile'] = downloadInfo[1] + downloadInfo[2]
+            
             fileLoc = filedialog.asksaveasfilename(**options)
         elif(settingsJson.guiMode == False):
             validDirPath = False
@@ -74,8 +87,13 @@ def chooseFolderToSaveFile( downloadInfo ):
                     validDirPath = True
         if ( len(fileLoc) > 0 ) and not (fileLoc.lower() == "cancel"):
             fileLoc = fileLoc
-            urllib.request.urlretrieve(downloadInfo[0], fileLoc )
-            terminalColor.printGreenString("DOWNLOAD FINISHED")
+            def _progress(count, block_size, total_size):
+                if ( float(count * block_size) / float(total_size) < 1.0):
+                    sys.stdout.write(
+                        '\rDownloading %.2f%%' % (float(count * block_size) / float(total_size) * 100.0))
+                    sys.stdout.flush()
+            urllib.request.urlretrieve(downloadInfo[0], fileLoc, reporthook=_progress)
+            terminalColor.printGreenString("\nDOWNLOAD FINISHED")
             print("File Saved To: " + fileLoc)
         else:
             terminalColor.printRedString("DOWNLOAD CANCELED")

@@ -6,7 +6,7 @@ lambda_client = boto3.client('lambda')
 
 def unitEditOptions(responseJson, unitID):
     intDecision = 0
-    listOfOptions =[". Edit Entry", ". Download Unit Label", ". Exit"]
+    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             printUnitInfo(responseJson, unitID)
@@ -16,6 +16,11 @@ def unitEditOptions(responseJson, unitID):
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit"): break
             elif ( listOfOptions[intDecision-1] == ". Edit Entry"): unitEditEntry(responseJson)
+            elif ( listOfOptions[intDecision-1] == ". Download Unit Photos"):
+                try:
+                    downloadUnitPhoto(responseJson)
+                except:
+                    terminalColor.printRedString("Unable to download unit label")
             elif ( listOfOptions[intDecision-1] == ". Download Unit Label"):
                 intDecision = 0
                 try:
@@ -239,6 +244,14 @@ def downloadUnitLabel(unitID):
     nameToDownload = unitID + " Label"
     extensionToDownload = ".png"
     categoryToDownload = "Labels"
+    fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
+
+def downloadUnitPhoto(responseJson):
+    unitInfo = responseJson["unitInfo"]
+    urlToDownload = unitInfo["Photo_URL"]
+    nameToDownload = unitInfo["Unit_ID"] + "_Photo"
+    extensionToDownload = "unknown"
+    categoryToDownload = "Unit Photos"
     fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
 
 def createNewUnitLabel(unitID):
