@@ -327,9 +327,7 @@ def editTextEntry(stuffToUpdate, unitInfo, category):
     originalData = unitInfo[category]
     try: oldData = stuffToUpdate[category]
     except: oldData = unitInfo[category]
-    #newData = click.edit(oldData)
-    #newData = newData.replace('\n', '')
-    newData = typewrite(oldData)
+    newData = rlinput(category +": " ,oldData)
     stuffToUpdate[category] = newData
     if originalData == newData: changesMade = False
     elif oldData != newData: changesMade = True
@@ -340,5 +338,12 @@ def vimAlternative(prompt, prefill=''):
    readline.set_startup_hook(lambda: readline.insert_text(prefill))
    try:
       return input(prompt)  # or raw_input in Python 2
+   finally:
+      readline.set_startup_hook()
+
+def rlinput(prompt, prefill=''):
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)
    finally:
       readline.set_startup_hook()
