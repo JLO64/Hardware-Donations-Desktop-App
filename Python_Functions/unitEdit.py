@@ -75,8 +75,10 @@ def unitEditEntry(responseJson):
                 try: oldLocation = stuffToUpdate["Location"]
                 except: oldLocation = unitInfo["Location"]
                 newLocation = changeUnitLocation()
-                stuffToUpdate["Location"] = newLocation
-                if oldLocation != newLocation: changesMade = True
+                if newLocation == "Cancel": pass
+                elif oldLocation != newLocation:
+                    changesMade = True
+                    stuffToUpdate["Location"] = newLocation
             elif ( listOfOptions[intDecision-1] == ". Status"):
                 intDecision = 0
                 arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Status")
@@ -90,8 +92,9 @@ def unitEditEntry(responseJson):
             elif ( listOfOptions[intDecision-1] == ". Manufacturer"):
                 intDecision = 0
                 arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Manufacturer")
-                stuffToUpdate = arrayOfChanges["stuffToUpdate"]
                 changesMade = arrayOfChanges["changesMade"]
+                if changesMade:
+                    stuffToUpdate = arrayOfChanges["stuffToUpdate"]
             elif ( listOfOptions[intDecision-1] == ". Model"):
                 intDecision = 0
                 arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Model")
@@ -157,7 +160,7 @@ def unitEditEntry(responseJson):
                     changesMade = arrayOfChanges["changesMade"]
                 except:
                     terminalColor.printRedString("Invalid Input")
-            elif ( listOfOptions[intDecision-1] == ". RAM Slots"):
+            elif ( listOfOptions[intDecision-1] == ". RAM Slots"):# 4 out of 4
                 intDecision = 0
                 arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "RAM Slots")
                 stuffToUpdate = arrayOfChanges["stuffToUpdate"]
@@ -268,7 +271,7 @@ def createNewUnitLabel(unitID):
     labelURL=passTest["qrLabelURL"]
 
 def changeUnitLocation():
-    unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)"]
+    unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)", "Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(unitLocations)) ):
         try:
@@ -324,22 +327,17 @@ def changeRAMType():
             terminalColor.printRedString("Invalid Input")
 
 def editTextEntry(stuffToUpdate, unitInfo, category):
+    copyOfStuffToUpdate = stuffToUpdate.copy()
     originalData = unitInfo[category]
-    try: oldData = stuffToUpdate[category]
+    try: oldData = copyOfStuffToUpdate[category]
     except: oldData = unitInfo[category]
+    print("Original " + category + " Data: " + originalData)
     newData = rlinput(category +": " ,oldData)
-    stuffToUpdate[category] = newData
+    copyOfStuffToUpdate[category] = newData
     if originalData == newData: changesMade = False
     elif oldData != newData: changesMade = True
     else: changesMade = False
-    return dict(stuffToUpdate=stuffToUpdate, changesMade=changesMade)
-
-def vimAlternative(prompt, prefill=''):
-   readline.set_startup_hook(lambda: readline.insert_text(prefill))
-   try:
-      return input(prompt)  # or raw_input in Python 2
-   finally:
-      readline.set_startup_hook()
+    return dict(stuffToUpdate=copyOfStuffToUpdate, changesMade=changesMade)
 
 def rlinput(prompt, prefill=''):
    readline.set_startup_hook(lambda: readline.insert_text(prefill))
