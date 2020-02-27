@@ -55,7 +55,7 @@ def checkCredentials(credentials): #Connect to AWS Lambda to check login
 
 def selectCategory():
     intDecision = 0
-    listOfOptions =[". Search Units", ". Search Users", ". Exit"]
+    listOfOptions =[". Search Units", ". Search Users", ". Create Unit", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             print("\nWhat do you want to do?")
@@ -66,6 +66,9 @@ def selectCategory():
             elif ( listOfOptions[intDecision-1] == ". Search Units"):
                 intDecision = 0
                 searchUnits()
+            elif ( listOfOptions[intDecision-1] == ". Create Unit"):
+                intDecision = 0
+                createUnit()
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -144,3 +147,18 @@ def readSavedCredentials():
             settingsJson.key3 = data.get('key3')
             return True
     else: return False
+
+def createUnit():
+    print("\nPlease enter the following information")
+    unitID = input("Unit ID: ")
+    unitComments = input("Comments: ")
+    unitStatus = input("Status: ")
+    createUnitInfo = dict(Unit_ID=unitID,Comments=unitComments,Status=unitStatus)
+    payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=createUnitInfo)
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+        InvocationType='RequestResponse',
+        Payload=json.dumps(payload),
+    )
+    passTest=json.loads(response['Payload'].read())
+    print(passTest)
