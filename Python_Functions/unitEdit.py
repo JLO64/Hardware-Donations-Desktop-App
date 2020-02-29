@@ -62,8 +62,8 @@ def unitEditEntry(responseJson, typeOfEditing):
                     print("\nDo you want to want to upload these changes?[Yes/No]")
                     strDecision = input()
                     if strDecision.lower() == "yes" or strDecision.lower() == "y":
-                        uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
-                        break
+                        uploadDataOk = True
+                        return uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
                     elif strDecision.lower() == "no" or strDecision.lower() == "n":
                         intDecision = 0
                         break
@@ -223,7 +223,7 @@ def uploadUnitUpdate(stuffToUpdate, unitID):
     )
     passTest=json.loads(response['Payload'].read())
     responseJson=passTest["unitInfo"]
-    unitEditOptions(passTest, responseJson["Unit_ID"])
+    return passTest
 
 def printUnitInfo(responseJson, unitID):
     try:
