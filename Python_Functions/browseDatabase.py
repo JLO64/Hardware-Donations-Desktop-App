@@ -65,7 +65,9 @@ def selectCategory():
             elif ( listOfOptions[intDecision-1] == ". Exit"): break
             elif ( listOfOptions[intDecision-1] == ". Search Units"):
                 intDecision = 0
-                searchUnits()
+                searchResults = searchUnits()
+                if searchResults["unitExists"]: unitEdit.unitEditOptions(searchResults["rJSON"], searchResults["unitID"])
+                else: terminalColor.printRedString("unable to find unit")
             elif ( listOfOptions[intDecision-1] == ". Create Unit"):
                 intDecision = 0
                 createUnit()
@@ -100,10 +102,8 @@ def searchUnits():
             unitNumInt = int(input())
             unitID = unitType + "-" + str(unitNumInt)
             responseJson = getUnitInfo(unitID)
-            if (responseJson["result"] == True ):
-                unitEdit.unitEditOptions(responseJson, unitID)
-            else:
-                terminalColor.printRedString("unable to find unit")
+            if (responseJson["result"] == True ): return dict(unitExists=True, rJSON=responseJson, unitID=unitID)
+            else: return dict(unitExists=False, unitID=unitID)
         except:
             unitTypeInt = 0
             terminalColor.printRedString("Invalid Input")
@@ -150,7 +150,12 @@ def readSavedCredentials():
 
 def createUnit():
     print("\nPlease enter the following information")
-    unitID = input("Unit ID: ")
+    searchResults = searchUnits()
+    if searchResults["unitExists"]: 
+        terminalColor.printRedString("This unit already exists")
+        return
+    unitID = searchResults["unitID"]
+    terminalColor.printGreenString("No unit located with this id")
     unitComments = input("Comments: ")
     unitStatus = input("Status: ")
     createUnitInfo = dict(Unit_ID=unitID,Comments=unitComments,Status=unitStatus)

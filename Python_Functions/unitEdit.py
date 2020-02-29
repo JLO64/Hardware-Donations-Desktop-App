@@ -16,7 +16,9 @@ def unitEditOptions(responseJson, unitID):
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit"): break
-            elif ( listOfOptions[intDecision-1] == ". Edit Entry"): unitEditEntry(responseJson)
+            elif ( listOfOptions[intDecision-1] == ". Edit Entry"):
+                intDecision = 0
+                responseJson = unitEditEntry(responseJson, "Editing Existing Unit")
             elif ( listOfOptions[intDecision-1] == ". Download Unit Photos"):
                 try:
                     downloadUnitPhoto(responseJson)
@@ -36,7 +38,7 @@ def unitEditOptions(responseJson, unitID):
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def unitEditEntry(responseJson):
+def unitEditEntry(responseJson, typeOfEditing):
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
     listOfOptions =[". Location", ". Status", ". User ID",". Manufacturer",". Model",". ARK-OS Version", ". Original Operating System", ". CPU Model", ". CPU GHz",". CPU Threads",". CPU Architecture",". RAM GB",". RAM Slots",". RAM Type", ". HDD GB", ". HDD Port",". HDD Speed",". USB Ports",". Audio Ports",". Display Ports",". External Disk Drives",". Networking",". Other Ports", ". Comments", ". Exit", ". Save and Exit"]
@@ -50,8 +52,7 @@ def unitEditEntry(responseJson):
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit" ):
-                unitEditOptions(responseJson, unitInfo["Unit_ID"])
-                break
+                return responseJson
             elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and changesMade:
                 uploadDataOk = False
                 while not uploadDataOk:
