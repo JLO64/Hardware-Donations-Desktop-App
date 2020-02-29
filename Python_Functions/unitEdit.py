@@ -1,5 +1,5 @@
 import boto3, json, getpass, os, click, readline
-import terminalColor, settingsJson, fileFunctions, unitEdit
+import terminalColor, settingsJson, fileFunctions, unitEdit, browseDatabase
 import array as arr
 from pyautogui import typewrite
 
@@ -7,7 +7,7 @@ lambda_client = boto3.client('lambda')
 
 def unitEditOptions(responseJson, unitID):
     intDecision = 0
-    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Exit"]
+    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Delete Unit", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             printUnitInfo(responseJson, unitID)
@@ -19,7 +19,11 @@ def unitEditOptions(responseJson, unitID):
             elif ( listOfOptions[intDecision-1] == ". Edit Entry"):
                 intDecision = 0
                 responseJson = unitEditEntry(responseJson, "Editing Existing Unit")
+            elif ( listOfOptions[intDecision-1] == ". Delete Unit"):
+                if deleteUnit(unitID): pass
+                else: intDecision = 0
             elif ( listOfOptions[intDecision-1] == ". Download Unit Photos"):
+                intDecision = 0
                 try:
                     downloadUnitPhoto(responseJson)
                 except:
@@ -370,3 +374,19 @@ def rlinput(prompt, prefill=''):
       return input(prompt)
    finally:
       readline.set_startup_hook()
+
+def deleteUnit(unitID):
+    verifyIdentify = browseDatabase.askForCredentials(False)
+    if verifyIdentify:
+        try:
+            payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_delete", unitID=unitID)
+            response = lambda_client.invoke(
+                FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+                InvocationType='RequestResponse',
+                Payload=json.dumps(payload),
+            )
+            responseJSON=json.loads(response['Payload'].read())
+            return responseJSON["result"]
+        except:
+            return False
+    return False
