@@ -20,6 +20,10 @@ def printGreenString( stringToPrint ):
     if settingsJson.colorMode == True: print( bcolors.GREEN + stringToPrint.upper() + bcolors.ENDC )
     else: print(stringToPrint.upper())
 
+def printGreenRegString( stringToPrint ):
+    if settingsJson.colorMode == True: print( bcolors.GREEN + stringToPrint + bcolors.ENDC )
+    else: print(stringToPrint)
+
 def printBlueString( stringToPrint ):
     if settingsJson.colorMode == True: print( bcolors.BLUE + stringToPrint + bcolors.ENDC )
     else: print(stringToPrint)

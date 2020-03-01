@@ -45,14 +45,17 @@ def unitEditOptions(responseJson, unitID):
 def unitEditEntry(responseJson, typeOfEditing):
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
-    listOfOptions =[". Location", ". Status", ". User ID",". Manufacturer",". Model",". ARK-OS Version", ". Original Operating System", ". CPU Model", ". CPU GHz",". CPU Threads",". CPU Architecture",". RAM GB",". RAM Slots",". RAM Type", ". HDD GB", ". HDD Port",". HDD Speed",". USB Ports",". Audio Ports",". Display Ports",". External Disk Drives",". Networking",". Other Ports", ". Comments", ". Exit", ". Save and Exit"]
+    listOfOptions = [". Location", ". Status", ". User ID",". Manufacturer",". Model",". ARK-OS Version", ". Original Operating System", ". CPU Model", ". CPU GHz",". CPU Threads",". CPU Architecture",". RAM GB",". RAM Slots",". RAM Type", ". HDD GB", ". HDD Port",". HDD Speed",". USB Ports",". Audio Ports",". Display Ports",". External Disk Drives",". Networking",". Other Ports", ". Comments", ". Exit", ". Save and Exit"]
+    listOfCategories = ["Location", "Status", "UserID", "Manufacturer", "Model", "ARK-OS_Version", "Operating System", "CPU Type", "CPU GHz", "CPU Threads","CPU Architecture","RAM","RAM Slots","RAM Type", "HDD", "HDD Port","HDD Speed","USB Ports","Audio Ports","Display Ports","Disk Drive","Networking","Ports", "Comments"]
     stuffToUpdate = {}
     changesMade = False
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             print("\nWhat section do you want to edit?")
-            for i in range( len(listOfOptions) - 1): terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
-            if changesMade: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] )
+            for i in range( len(listOfOptions) - 1):
+                if ( len(listOfCategories) > i and checkIfCategoryHasChanges(listOfCategories[i], stuffToUpdate) ): terminalColor.printGreenRegString( str(i+1) + listOfOptions[i] )
+                else: terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
+            if changesMade: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] ) #Prints "Save and Exit"
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit" ):
@@ -389,4 +392,9 @@ def deleteUnit(unitID):
             return responseJSON["result"]
         except:
             return False
+    return False
+
+def checkIfCategoryHasChanges(Category, updateJson):
+    for i in updateJson:
+        if i == Category: return True
     return False
