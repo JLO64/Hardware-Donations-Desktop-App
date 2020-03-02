@@ -5,7 +5,7 @@ from pyautogui import typewrite
 
 lambda_client = boto3.client('lambda')
 
-def unitEditOptions(responseJson, unitID):
+def unitEditOptions(responseJson, unitID): #unit options user is given
     intDecision = 0
     listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Delete Unit", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
@@ -42,25 +42,24 @@ def unitEditOptions(responseJson, unitID):
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def unitEditEntry(responseJson, typeOfEditing):
+def unitEditEntry(responseJson, typeOfEditing): #User selects what category they want to edit
     unitInfo = responseJson["unitInfo"]
     intDecision = 0
     listOfOptions = [". Location", ". Status", ". User ID",". Manufacturer",". Model",". ARK-OS Version", ". Original Operating System", ". CPU Model", ". CPU GHz",". CPU Threads",". CPU Architecture",". RAM GB",". RAM Slots",". RAM Type", ". HDD GB", ". HDD Port",". HDD Speed",". USB Ports",". Audio Ports",". Display Ports",". External Disk Drives",". Networking",". Other Ports", ". Comments", ". Exit", ". Save and Exit"]
     listOfCategories = ["Location", "Status", "UserID", "Manufacturer", "Model", "ARK-OS_Version", "Operating System", "CPU Type", "CPU GHz", "CPU Threads","CPU Architecture","RAM","RAM Slots","RAM Type", "HDD", "HDD Port","HDD Speed","USB Ports","Audio Ports","Display Ports","Disk Drive","Networking","Ports", "Comments"]
     stuffToUpdate = {}
-    changesMade = False
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             print("\nWhat section do you want to edit?")
             for i in range( len(listOfOptions) - 1):
                 if ( len(listOfCategories) > i and checkIfCategoryHasChanges(listOfCategories[i], stuffToUpdate) ): terminalColor.printGreenRegString( str(i+1) + listOfOptions[i] )
                 else: terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
-            if changesMade: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] ) #Prints "Save and Exit"
+            if len(stuffToUpdate) > 0: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] ) #Prints "Save and Exit"
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit" ):
                 return responseJson
-            elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and changesMade:
+            elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and len(stuffToUpdate) > 0:
                 uploadDataOk = False
                 while not uploadDataOk:
                     for x in stuffToUpdate:
@@ -82,7 +81,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 except: oldComments = unitInfo["Comments"]
                 newComments = click.edit(oldComments)
                 stuffToUpdate["Comments"] = newComments
-                if oldComments != newComments: changesMade = True
             elif ( listOfOptions[intDecision-1] == ". Location"):
                 intDecision = 0
                 try: oldLocation = stuffToUpdate["Location"]
@@ -90,7 +88,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 newLocation = changeUnitLocation()
                 if newLocation == "Cancel": pass
                 elif oldLocation != newLocation:
-                    changesMade = True
                     stuffToUpdate["Location"] = newLocation
             elif ( listOfOptions[intDecision-1] == ". ARK-OS Version"):
                 intDecision = 0
@@ -99,9 +96,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 except: oldData = unitInfo["ARK-OS_Version"]
                 newData = changeARKOSVersion()
                 stuffToUpdate["ARK-OS_Version"] = newData
-                if originalData == newData: changesMade = False
-                elif oldData != newData: changesMade = True
-                else: changesMade = False
             elif ( listOfOptions[intDecision-1] == ". CPU Architecture"):
                 intDecision = 0
                 originalData = unitInfo["CPU Architecture"]
@@ -109,9 +103,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 except: oldData = unitInfo["CPU Architecture"]
                 newData = changeCPUArchitecture()
                 stuffToUpdate["CPU Architecture"] = newData
-                if originalData == newData: changesMade = False
-                elif oldData != newData: changesMade = True
-                else: changesMade = False
             elif ( listOfOptions[intDecision-1] == ". RAM Type"):
                 intDecision = 0
                 originalData = unitInfo["RAM Type"]
@@ -119,19 +110,14 @@ def unitEditEntry(responseJson, typeOfEditing):
                 except: oldData = unitInfo["RAM Type"]
                 newData = changeRAMType()
                 stuffToUpdate["RAM Type"] = newData
-                if originalData == newData: changesMade = False
-                elif oldData != newData: changesMade = True
-                else: changesMade = False
             else:
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, listOfCategories[intDecision-1])
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
+                stuffToUpdate = editTextEntry(stuffToUpdate, unitInfo, listOfCategories[intDecision-1])
                 intDecision = 0
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def uploadUnitUpdate(stuffToUpdate, unitID):
+def uploadUnitUpdate(stuffToUpdate, unitID): #Connects to AWS lambda to update unit data
     payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_update", unitID=unitID, updateInfo=stuffToUpdate)
     response = lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
@@ -142,7 +128,7 @@ def uploadUnitUpdate(stuffToUpdate, unitID):
     responseJson=passTest["unitInfo"]
     return passTest
 
-def printUnitInfo(responseJson, unitID):
+def printUnitInfo(responseJson, unitID): #Prints out data on units
     try:
         unitInfo = responseJson["unitInfo"]
         print("\nInfo Page For " + unitID )
@@ -181,18 +167,13 @@ def printUnitInfo(responseJson, unitID):
     except:
         terminalColor.printRedString("Unable to print all data")
 
-def downloadUnitLabel(unitID):
-    #https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Unit_Photos/HDD_Units/HDD-3/HDD-3_QR_Label.png
+def downloadUnitLabel(unitID): #downloads unit label from AWS S3
     awsURL = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Unit_Photos/"
     unitType = unitID.split("-",1)[0]
     unitLabelUrl = awsURL + unitType + "_Units/" + unitID + "/" + unitID + "_QR_Label.png"
-    urlToDownload = unitLabelUrl
-    nameToDownload = unitID + " Label"
-    extensionToDownload = ".png"
-    categoryToDownload = "Labels"
-    fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
+    fileFunctions.chooseFolderToSaveFile( [unitLabelUrl, unitID + " Label", ".png", "Labels"] )
 
-def downloadUnitPhoto(responseJson):
+def downloadUnitPhoto(responseJson): #downloads unit photo from AWS S3
     unitInfo = responseJson["unitInfo"]
     urlToDownload = unitInfo["Photo_URL"]
     nameToDownload = unitInfo["Unit_ID"] + "_Photo"
@@ -200,7 +181,7 @@ def downloadUnitPhoto(responseJson):
     categoryToDownload = "Unit Photos"
     fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
 
-def createNewUnitLabel(unitID):
+def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for the unit
     itemType = unitType = unitID.split("-",1)[0]
     itemNumber = unitType = unitID.split("-",1)[1]
     payload = dict(itemType=itemType, itemNumber=itemNumber)
@@ -212,7 +193,7 @@ def createNewUnitLabel(unitID):
     passTest=json.loads(response['Payload'].read())
     labelURL=passTest["qrLabelURL"]
 
-def changeUnitLocation():
+def changeUnitLocation(): #Selects version of ARK-OS
     unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)", "Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(unitLocations)) ):
@@ -226,7 +207,7 @@ def changeUnitLocation():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeARKOSVersion():
+def changeARKOSVersion(): #Selects version of ARK-OS
     arkosVersions = ["Unknown","None","v1.0.6","v1.1.2","v1.2.1","v2.0.1 \"Bosco\"","v2.1.0 \"Bosco Tech\""]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(arkosVersions)) ):
@@ -240,7 +221,7 @@ def changeARKOSVersion():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeCPUArchitecture():
+def changeCPUArchitecture(): #Selects CPU Arch.
     cpuArchitectures = ["Unknown","64-Bit","32-Bit","PowerPC"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(cpuArchitectures)) ):
@@ -254,12 +235,12 @@ def changeCPUArchitecture():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeRAMType():
+def changeRAMType(): #Selects type of RAM
     ramType = ["Unknown","Other","DDR RAM","DDR2 RAM","DDR3 RAM","DDR4 RAM","DDR SDRAM","DDR2 SDRAM","DDR3 SDRAM","DDR4 SDRAM"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(ramType)) ):
         try:
-            print("\nWhat CPU architecture does this unit have?")
+            print("\nWhat type of RAM does this unit have?")
             for i in range( len(ramType) ): terminalColor.printBlueString( str(i+1) + ". " + ramType[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(ramType)) ): terminalColor.printRedString("Invalid Input")
@@ -268,7 +249,7 @@ def changeRAMType():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def editTextEntry(stuffToUpdate, unitInfo, category):
+def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a category
     copyOfStuffToUpdate = stuffToUpdate.copy()
     originalData = unitInfo[category]
     try: oldData = copyOfStuffToUpdate[category]
@@ -276,19 +257,16 @@ def editTextEntry(stuffToUpdate, unitInfo, category):
     print("Original " + category + " Data: " + originalData)
     newData = rlinput(category +": " ,oldData)
     copyOfStuffToUpdate[category] = newData
-    if originalData == newData: changesMade = False
-    elif oldData != newData: changesMade = True
-    else: changesMade = False
-    return dict(stuffToUpdate=copyOfStuffToUpdate, changesMade=changesMade)
+    return copyOfStuffToUpdate
 
-def rlinput(prompt, prefill=''):
+def rlinput(prompt, prefill=''): #code for input with text prefilled in
    readline.set_startup_hook(lambda: readline.insert_text(prefill))
    try:
       return input(prompt)
    finally:
       readline.set_startup_hook()
 
-def deleteUnit(unitID):
+def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
     verifyIdentify = browseDatabase.askForCredentials(False)
     if verifyIdentify:
         try:
@@ -304,7 +282,7 @@ def deleteUnit(unitID):
             return False
     return False
 
-def checkIfCategoryHasChanges(Category, updateJson):
+def checkIfCategoryHasChanges(Category, updateJson): #Used to pick green or blue color in catageory selcection
     for i in updateJson:
         if i == Category: return True
     return False
