@@ -256,7 +256,8 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
     except: oldData = unitInfo[category]
     print("Original " + category + " Data: " + originalData)
     newData = rlinput(category +": " ,oldData)
-    copyOfStuffToUpdate[category] = newData
+    if newData == originalData: del copyOfStuffToUpdate[category]
+    else: copyOfStuffToUpdate[category] = newData
     return copyOfStuffToUpdate
 
 def rlinput(prompt, prefill=''): #code for input with text prefilled in
