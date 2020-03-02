@@ -92,26 +92,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 elif oldLocation != newLocation:
                     changesMade = True
                     stuffToUpdate["Location"] = newLocation
-            elif ( listOfOptions[intDecision-1] == ". Status"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Manufacturer")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". User ID"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "UserID")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Manufacturer"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Manufacturer")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Model"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Model")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
             elif ( listOfOptions[intDecision-1] == ". ARK-OS Version"):
                 intDecision = 0
                 originalData = unitInfo["ARK-OS_Version"]
@@ -122,26 +102,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 if originalData == newData: changesMade = False
                 elif oldData != newData: changesMade = True
                 else: changesMade = False
-            elif ( listOfOptions[intDecision-1] == ". Original Operating System"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Operating System")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". CPU Model"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU Type")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". CPU GHz"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU GHz")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". CPU Threads"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "CPU Threads")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
             elif ( listOfOptions[intDecision-1] == ". CPU Architecture"):
                 intDecision = 0
                 originalData = unitInfo["CPU Architecture"]
@@ -152,16 +112,6 @@ def unitEditEntry(responseJson, typeOfEditing):
                 if originalData == newData: changesMade = False
                 elif oldData != newData: changesMade = True
                 else: changesMade = False
-            elif ( listOfOptions[intDecision-1] == ". RAM GB"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "RAM")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". RAM Slots"):# 4 out of 4
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "RAM Slots")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
             elif ( listOfOptions[intDecision-1] == ". RAM Type"):
                 intDecision = 0
                 originalData = unitInfo["RAM Type"]
@@ -172,51 +122,11 @@ def unitEditEntry(responseJson, typeOfEditing):
                 if originalData == newData: changesMade = False
                 elif oldData != newData: changesMade = True
                 else: changesMade = False
-            elif ( listOfOptions[intDecision-1] == ". HDD GB"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "HDD")
+            else:
+                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, listOfCategories[intDecision-1])
                 changesMade = arrayOfChanges["changesMade"]
                 if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". HDD Port"):
                 intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "HDD Port")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". HDD Speed"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "HDD Speed")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". USB Ports"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "USB Ports")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Audio Ports"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Audio Ports")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Display Ports"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Display Ports")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". External Disk Drives"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Disk Drive")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Networking"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Networking")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
-            elif ( listOfOptions[intDecision-1] == ". Other Ports"):
-                intDecision = 0
-                arrayOfChanges = editTextEntry(stuffToUpdate, unitInfo, "Ports")
-                changesMade = arrayOfChanges["changesMade"]
-                if changesMade: stuffToUpdate = arrayOfChanges["stuffToUpdate"]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
