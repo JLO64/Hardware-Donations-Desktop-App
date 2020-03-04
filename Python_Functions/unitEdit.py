@@ -52,7 +52,7 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
         try:
             print("\nWhat section do you want to edit?")
             for i in range( len(listOfOptions) - 1):
-                if ( len(listOfCategories) > i and checkIfCategoryHasChanges(listOfCategories[i], stuffToUpdate) ): terminalColor.printGreenRegString( str(i+1) + listOfOptions[i] )
+                if ( len(listOfCategories) > i and listOfCategories[i] in stuffToUpdate ): terminalColor.printGreenRegString( str(i+1) + listOfOptions[i] )
                 else: terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
             if len(stuffToUpdate) > 0: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] ) #Prints "Save and Exit"
             intDecision = int(input())
@@ -81,35 +81,18 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
                 except: oldComments = unitInfo["Comments"]
                 newComments = click.edit(oldComments)
                 stuffToUpdate["Comments"] = newComments
-            elif ( listOfOptions[intDecision-1] == ". Location"):
+            elif checkIfCategoryHasLists(listOfCategories[intDecision-1]):
+                category = listOfCategories[intDecision-1]
                 intDecision = 0
-                try: oldLocation = stuffToUpdate["Location"]
-                except: oldLocation = unitInfo["Location"]
-                newLocation = changeUnitLocation()
-                if newLocation == "Cancel": pass
-                elif oldLocation != newLocation:
-                    stuffToUpdate["Location"] = newLocation
-            elif ( listOfOptions[intDecision-1] == ". ARK-OS Version"):
-                intDecision = 0
-                originalData = unitInfo["ARK-OS_Version"]
-                try: oldData = stuffToUpdate["ARK-OS_Version"]
-                except: oldData = unitInfo["ARK-OS_Version"]
-                newData = changeARKOSVersion()
-                stuffToUpdate["ARK-OS_Version"] = newData
-            elif ( listOfOptions[intDecision-1] == ". CPU Architecture"):
-                intDecision = 0
-                originalData = unitInfo["CPU Architecture"]
-                try: oldData = stuffToUpdate["CPU Architecture"]
-                except: oldData = unitInfo["CPU Architecture"]
-                newData = changeCPUArchitecture()
-                stuffToUpdate["CPU Architecture"] = newData
-            elif ( listOfOptions[intDecision-1] == ". RAM Type"):
-                intDecision = 0
-                originalData = unitInfo["RAM Type"]
-                try: oldData = stuffToUpdate["RAM Type"]
-                except: oldData = unitInfo["RAM Type"]
-                newData = changeRAMType()
-                stuffToUpdate["RAM Type"] = newData
+                originalData = unitInfo[category]
+                try: oldData = stuffToUpdate[category]
+                except: oldData = unitInfo[category]
+                if category == "RAM Type": newData = changeRAMType(originalData, oldData)
+                elif category == "CPU Architecture": newData = changeCPUArchitecture(originalData, oldData)
+                elif category == "ARK-OS_Version": newData = changeARKOSVersion(originalData, oldData)
+                elif category == "Location": newData = changeUnitLocation(originalData, oldData)
+                if newData == originalData and category in stuffToUpdate: del stuffToUpdate[category]
+                elif not newData == originalData: stuffToUpdate[category] = newData
             else:
                 stuffToUpdate = editTextEntry(stuffToUpdate, unitInfo, listOfCategories[intDecision-1])
                 intDecision = 0
@@ -175,11 +158,7 @@ def downloadUnitLabel(unitID): #downloads unit label from AWS S3
 
 def downloadUnitPhoto(responseJson): #downloads unit photo from AWS S3
     unitInfo = responseJson["unitInfo"]
-    urlToDownload = unitInfo["Photo_URL"]
-    nameToDownload = unitInfo["Unit_ID"] + "_Photo"
-    extensionToDownload = "unknown"
-    categoryToDownload = "Unit Photos"
-    fileFunctions.chooseFolderToSaveFile( [urlToDownload, nameToDownload, extensionToDownload, categoryToDownload] )
+    fileFunctions.chooseFolderToSaveFile( [unitInfo["Photo_URL"], unitInfo["Unit_ID"] + "_Photo", "unknown", "Unit Photos"] )
 
 def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for the unit
     itemType = unitType = unitID.split("-",1)[0]
@@ -193,57 +172,69 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
     passTest=json.loads(response['Payload'].read())
     labelURL=passTest["qrLabelURL"]
 
-def changeUnitLocation(): #Selects version of ARK-OS
+def changeUnitLocation(original, current): #Selects version of ARK-OS
     unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)", "Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(unitLocations)) ):
         try:
             print("\nWhere is this unit located?")
+            print("Original Location Version Data: " + original)
+            print("Current Location Version Data: " + current)
             for i in range( len(unitLocations) ): terminalColor.printBlueString( str(i+1) + ". " + unitLocations[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(unitLocations)) ): terminalColor.printRedString("Invalid Input")
+            elif unitLocations[intDecision -1] == "Cancel": return current
             else: return unitLocations[intDecision - 1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeARKOSVersion(): #Selects version of ARK-OS
-    arkosVersions = ["Unknown","None","v1.0.6","v1.1.2","v1.2.1","v2.0.1 \"Bosco\"","v2.1.0 \"Bosco Tech\""]
+def changeARKOSVersion(original, current): #Selects version of ARK-OS
+    arkosVersions = ["Unknown","None","Experimental","v1.0.6","v1.1.2","v1.2.1","v2.0.1 \"Bosco\"","v2.1.0 \"Bosco Tech\"", "Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(arkosVersions)) ):
         try:
             print("\nWhat version of ARK-OS does this unit have installed?")
+            print("Original ARK-OS Version Data: " + original)
+            print("Current ARK-OS Version Data: " + current)
             for i in range( len(arkosVersions) ): terminalColor.printBlueString( str(i+1) + ". " + arkosVersions[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(arkosVersions)) ): terminalColor.printRedString("Invalid Input")
+            elif arkosVersions[intDecision -1] == "Cancel": return current
             else: return arkosVersions[intDecision - 1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeCPUArchitecture(): #Selects CPU Arch.
-    cpuArchitectures = ["Unknown","64-Bit","32-Bit","PowerPC"]
+def changeCPUArchitecture(original, current): #Selects CPU Arch.
+    cpuArchitectures = ["Unknown","64-Bit","32-Bit","PowerPC","Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(cpuArchitectures)) ):
         try:
-            print("\nWhat CPU architecture does this unit have?")
+            print("\nWhat CPU Architecture does this unit have?")
+            print("Original CPU Architecture Data: " + original)
+            print("Current CPU Architecture Data: " + current)
             for i in range( len(cpuArchitectures) ): terminalColor.printBlueString( str(i+1) + ". " + cpuArchitectures[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(cpuArchitectures)) ): terminalColor.printRedString("Invalid Input")
-            else: return cpuArchitectures[intDecision - 1]
+            elif cpuArchitectures[intDecision -1] == "Cancel": return current
+            else: return cpuArchitectures[intDecision -1]
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
 
-def changeRAMType(): #Selects type of RAM
-    ramType = ["Unknown","Other","DDR RAM","DDR2 RAM","DDR3 RAM","DDR4 RAM","DDR SDRAM","DDR2 SDRAM","DDR3 SDRAM","DDR4 SDRAM"]
+def changeRAMType(original, current): #Selects type of RAM
+    ramType = ["Unknown","Other","DDR RAM","DDR2 RAM","DDR3 RAM","DDR4 RAM","DDR SDRAM","DDR2 SDRAM","DDR3 SDRAM","DDR4 SDRAM","Cancel"]
     intDecision = 0
     while ( (intDecision < 1 ) or (intDecision > len(ramType)) ):
         try:
             print("\nWhat type of RAM does this unit have?")
+            print("Original RAM Type Data: " + original)
+            print("Current RAM Type Data: " + current)
             for i in range( len(ramType) ): terminalColor.printBlueString( str(i+1) + ". " + ramType[i])
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(ramType)) ): terminalColor.printRedString("Invalid Input")
+            elif ramType[intDecision -1] == "Cancel": return current
             else: return ramType[intDecision - 1]
         except:
             intDecision = 0
@@ -256,8 +247,8 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
     except: oldData = unitInfo[category]
     print("Original " + category + " Data: " + originalData)
     newData = rlinput(category +": " ,oldData)
-    if newData == originalData: del copyOfStuffToUpdate[category]
-    else: copyOfStuffToUpdate[category] = newData
+    if newData == originalData and category in copyOfStuffToUpdate: del copyOfStuffToUpdate[category]
+    elif not newData == originalData: copyOfStuffToUpdate[category] = newData
     return copyOfStuffToUpdate
 
 def rlinput(prompt, prefill=''): #code for input with text prefilled in
@@ -283,7 +274,7 @@ def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
             return False
     return False
 
-def checkIfCategoryHasChanges(Category, updateJson): #Used to pick green or blue color in catageory selcection
-    for i in updateJson:
-        if i == Category: return True
+def checkIfCategoryHasLists(category):
+    categoryWithLists = ["RAM Type","CPU Architecture","ARK-OS_Version","Location"]
+    if category in categoryWithLists: return True
     return False
