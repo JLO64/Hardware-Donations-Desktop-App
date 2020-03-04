@@ -7,7 +7,7 @@ import terminalColor, downloadFiles, fileFunctions, settings, settingsJson, brow
 
 def printARKDino():
     arkDino = "\n     ╓╫╫╫╫╫╫╫╫╓\n     ╫╫╫╫╫╫╫╫╫╫\n     ╙╫╫╫╫╫╫╫╫╫\n          ╫╫╫╫╫\n          ╫╫╫╫╫╥\n          ╫╫╫╫╫╫╦╕\n        ╙╙╫╫╫╫╫╫╫╫╫╦        ╦\n           ║╫╫╫╫╫╫╫╫╫╦╥  ╓╥╫╫\n             ╩╫╫╫╫╫╫╫╫╫╫╫╫╫╫\n              └╫╫╫╫╫╫╫╫╫╫╫╩└\n                ╞╫╫╙╫╫╫╙\n               ╥║╡  ╥║╫\n"
-    print(arkDino + "\nHardware Donations Desktop App " + str(settingsJson.versionNum) + "\n\n")
+    print(arkDino + "\nHardware Donations Desktop App v" + str(settingsJson.versionNum) + "\n\n")
 
 if __name__ == "__main__":
     terminalColor.printGreenString("STARTING PROGRAM...")

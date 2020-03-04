@@ -149,10 +149,11 @@ def accountSettings(isLoggedOut):
                 intDecision = int(input())
                 if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ):
                     terminalColor.printRedString("Invalid Input")
-                elif ( listOfOptions[intDecision-1] == ". Cancel"): #Exit program
-                    break
-                elif ( listOfOptions[intDecision-1] == ". Logout"):
-                    logoutOfAccount()
+                elif ( listOfOptions[intDecision-1] == ". Cancel"): pass #Exit program
+                elif ( listOfOptions[intDecision-1] == ". Logout"): logoutOfAccount()
+                elif ( listOfOptions[intDecision-1] == ". Change Password"):
+                    intDecision = 0
+                    terminalColor.printRedString("This option has not been set up yet")
             except:
                 intDecision = 0
                 terminalColor.printRedString("Invalid Input")
