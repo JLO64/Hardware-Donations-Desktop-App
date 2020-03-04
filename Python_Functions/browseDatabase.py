@@ -162,6 +162,10 @@ def createUnit():
     newUnitJSON =  unitEdit.unitEditEntry( dict(unitInfo=jsonTemplate), "Creating New Unit")
     if newUnitJSON["Unit_ID"] == "OkToUpload":
         newUnitJSON["Unit_ID"] = unitID
+        unitType = unitID.split("-",1)[0]
+        if unitType == "HDD": newUnitJSON["Category"] = "HDD(Hardware Donations Desktop)"
+        elif unitType == "HDL": newUnitJSON["Category"] = "HDL(Hardware Donations Laptop)"
+        elif unitType == "NX": newUnitJSON["Category"] = "NX(Experimental)"
         payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=newUnitJSON)
         response = lambda_client.invoke(
             FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
@@ -169,6 +173,7 @@ def createUnit():
             Payload=json.dumps(payload),
         )
         passTest=json.loads(response['Payload'].read())
-        print(passTest)
+        if passTest["result"]: terminalColor.printGreenString("Unit Successfully created")
+        else: terminalColor.printRedString("Unit creation failed")
     else:
         terminalColor.printRedString("Unit creation canceled")
