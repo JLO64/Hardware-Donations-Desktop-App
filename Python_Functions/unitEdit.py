@@ -20,7 +20,7 @@ def unitEditOptions(responseJson, unitID): #unit options user is given
                 intDecision = 0
                 responseJson = unitEditEntry(responseJson, "Editing Existing Unit")
             elif ( listOfOptions[intDecision-1] == ". Delete Unit"):
-                if deleteUnit(unitID): pass
+                if deleteUnit(unitID): terminalColor.printGreenString("Unit Deleted")
                 else: intDecision = 0
             elif ( listOfOptions[intDecision-1] == ". Download Unit Photos"):
                 intDecision = 0
