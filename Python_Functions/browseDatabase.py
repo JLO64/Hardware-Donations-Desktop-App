@@ -156,14 +156,19 @@ def createUnit():
         return
     unitID = searchResults["unitID"]
     terminalColor.printGreenString("No unit located with this id")
-    unitComments = input("Comments: ")
-    unitStatus = input("Status: ")
-    createUnitInfo = dict(Unit_ID=unitID,Comments=unitComments,Status=unitStatus)
-    payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=createUnitInfo)
-    response = lambda_client.invoke(
-        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
-        InvocationType='RequestResponse',
-        Payload=json.dumps(payload),
-    )
-    passTest=json.loads(response['Payload'].read())
-    print(passTest)
+    jsonTemplate = {}
+    listOfCategories = ["Location", "Status", "UserID", "Manufacturer", "Model", "ARK-OS_Version", "Operating System", "CPU Type", "CPU GHz", "CPU Threads","CPU Architecture","RAM","RAM Slots","RAM Type", "HDD", "HDD Port","HDD Speed","USB Ports","Audio Ports","Display Ports","Disk Drive","Networking","Ports", "Comments"]
+    for i in listOfCategories: jsonTemplate[i] = "NO DATA"
+    newUnitJSON =  unitEdit.unitEditEntry( dict(unitInfo=jsonTemplate), "Creating New Unit")
+    if newUnitJSON["Unit_ID"] == "OkToUpload":
+        newUnitJSON["Unit_ID"] = unitID
+        payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=newUnitJSON)
+        response = lambda_client.invoke(
+            FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload),
+        )
+        passTest=json.loads(response['Payload'].read())
+        print(passTest)
+    else:
+        terminalColor.printRedString("Unit creation canceled")

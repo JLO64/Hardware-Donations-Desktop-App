@@ -58,23 +58,25 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
             intDecision = int(input())
             if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit" ):
+                try: testVariable = responseJson["Unit_ID"]
+                except: responseJson["Unit_ID"] = "bad"
                 return responseJson
+                
             elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and len(stuffToUpdate) > 0:
-                uploadDataOk = False
-                while not uploadDataOk:
-                    for x in stuffToUpdate:
-                        data = stuffToUpdate[x]
-                        print(terminalColor.generateYellowString(x) + ": " + data )
-                    print("\nDo you want to want to upload these changes?[Yes/No]")
-                    strDecision = input()
-                    if strDecision.lower() == "yes" or strDecision.lower() == "y":
-                        uploadDataOk = True
-                        return uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
-                    elif strDecision.lower() == "no" or strDecision.lower() == "n":
-                        intDecision = 0
-                        break
+                if typeOfEditing == "Editing Existing Unit":
+                    if verifyUploadData(stuffToUpdate): return uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
                     else:
-                        terminalColor.printRedString("Invalid Input")                        
+                        intDecision = 0
+                elif typeOfEditing == "Creating New Unit":
+                    if len(stuffToUpdate) > 23:
+                        if verifyUploadData(stuffToUpdate): 
+                            stuffToUpdate["Unit_ID"] = "OkToUpload"
+                            return stuffToUpdate
+                        else:
+                            intDecision = 0
+                    else:
+                        intDecision = 0
+                        terminalColor.printRedString("Please fill out all fields before creating a new unit")
             elif ( listOfOptions[intDecision-1] == ". Comments"):
                 intDecision = 0
                 try: oldComments = stuffToUpdate["Comments"]
@@ -278,3 +280,13 @@ def checkIfCategoryHasLists(category):
     categoryWithLists = ["RAM Type","CPU Architecture","ARK-OS_Version","Location"]
     if category in categoryWithLists: return True
     return False
+
+def verifyUploadData(jsonToUpload):
+    uploadDataOk = False
+    while not uploadDataOk:
+        for x in jsonToUpload: print(terminalColor.generateYellowString(x) + ": " + jsonToUpload[x] )
+        print("\nDo you want to want to upload these changes?[Yes/No]")
+        strDecision = input()
+        if strDecision.lower() == "yes" or strDecision.lower() == "y": return True
+        elif strDecision.lower() == "no" or strDecision.lower() == "n": return False
+        else: terminalColor.printRedString("Invalid Input")                        
