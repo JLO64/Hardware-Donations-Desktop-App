@@ -131,7 +131,8 @@ def logoutOfAccount():
             settingsJson.key1 = "na"
             settingsJson.key2 = "na"
             settingsJson.key3 = "na"
-            fileFunctions.deleteFile(os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo")
+            loginFileLoc = os.path.expanduser('~') + "/HardwareDonations/Settings/LoginInfo"
+            if fileFunctions.checkForFile(loginFileLoc): fileFunctions.deleteFile(loginFileLoc)
             terminalColor.printGreenString("SETTINGS UPDATED")
 
 def accountSettings(isLoggedOut):
