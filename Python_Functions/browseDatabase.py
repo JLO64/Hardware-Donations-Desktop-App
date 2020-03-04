@@ -17,7 +17,7 @@ def askForCredentials(storeCredentials): #Ask user for login info
     wantsToCancel = False
     while(not hasValidCred and not wantsToCancel):
         try:
-            print("\nPlease type your Hardware Donations Username and Password.(Type \"Cancel\" to exit)\nUsername:", end=" ")
+            print("\nPlease enter your Email and Password.(Type \"Cancel\" to exit)\nEmail:", end=" ")
             username = str(input())
             if username.lower()=="cancel":
                 wantsToCancel = True

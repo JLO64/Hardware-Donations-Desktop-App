@@ -136,7 +136,7 @@ def logoutOfAccount():
 
 def accountSettings(isLoggedOut):
     if isLoggedOut:
-        isLoggedOut = not browseDatabase.askForCredentials()
+        isLoggedOut = not browseDatabase.askForCredentials(True)
     if not isLoggedOut:
         intDecision = 0
         listOfOptions =[". Logout", ". Change Password", ". Cancel"]
