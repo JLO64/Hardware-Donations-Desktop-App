@@ -279,6 +279,9 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
     except: oldData = unitInfo[category]
     print("Original " + category + " Data: " + originalData)
     newData = rlinput(category +": " ,oldData)
+    while len(newData) < 2 or len(newData) > 70:
+        terminalColor.printRedString("The data you entered is too long or short")
+        newData = rlinput(category +": " ,oldData)
     if newData == originalData and category in copyOfStuffToUpdate: del copyOfStuffToUpdate[category]
     elif not newData == originalData: copyOfStuffToUpdate[category] = newData
     return copyOfStuffToUpdate
