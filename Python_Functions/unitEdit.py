@@ -7,7 +7,7 @@ lambda_client = boto3.client('lambda')
 
 def unitEditOptions(responseJson, unitID): #unit options user is given
     intDecision = 0
-    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Delete Unit", ". Exit"]
+    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Download Unit PDF", ". Delete Unit", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             printUnitInfo(responseJson, unitID)
@@ -25,9 +25,12 @@ def unitEditOptions(responseJson, unitID): #unit options user is given
             elif ( listOfOptions[intDecision-1] == ". Download Unit Photos"):
                 intDecision = 0
                 try:
-                    downloadUnitPhoto(responseJson)
+                    unitInfo = responseJson["unitInfo"]
+                    if unitInfo["Photo_URL"] == "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/noPhotoFound.png":
+                        terminalColor.printRedString("No unit photos uploaded")
+                    else: downloadUnitPhoto(responseJson)
                 except:
-                    terminalColor.printRedString("Unable to download unit label")
+                    terminalColor.printRedString("Unable to download unit photos")
             elif ( listOfOptions[intDecision-1] == ". Download Unit Label"):
                 intDecision = 0
                 try:
@@ -38,6 +41,16 @@ def unitEditOptions(responseJson, unitID): #unit options user is given
                         downloadUnitLabel(unitID)
                     except:
                         terminalColor.printRedString("Unable to download unit label")
+            elif ( listOfOptions[intDecision-1] == ". Download Unit PDF"):
+                intDecision = 0
+                try:
+                    downloadUnitPDF(unitID)
+                except:
+                    try:
+                        createNewUnitPDF(unitID, responseJson)
+                        downloadUnitPDF(unitID)
+                    except:
+                        terminalColor.printRedString("Unable to download unit PDF")
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -56,7 +69,10 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
                 else: terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
             if len(stuffToUpdate) > 0: terminalColor.printBlueString( str(len(listOfOptions)) + listOfOptions[len(listOfOptions) - 1] ) #Prints "Save and Exit"
             intDecision = int(input())
-            if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
+            if ( (intDecision) == 20207864):
+                for i in listOfCategories:
+                    stuffToUpdate[i] = "[REDACTED]"
+            elif ( (intDecision < 1) or (intDecision > len(listOfOptions)) ): terminalColor.printRedString("Invalid Input")
             elif ( listOfOptions[intDecision-1] == ". Exit" ):
                 try: testVariable = responseJson["Unit_ID"]
                 except: responseJson["Unit_ID"] = "bad"
@@ -162,6 +178,12 @@ def downloadUnitPhoto(responseJson): #downloads unit photo from AWS S3
     unitInfo = responseJson["unitInfo"]
     fileFunctions.chooseFolderToSaveFile( [unitInfo["Photo_URL"], unitInfo["Unit_ID"] + "_Photo", "unknown", "Unit Photos"] )
 
+def downloadUnitPDF(unitID): #downloads unit pdf from AWS S3
+    awsURL = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Unit_Photos/"
+    unitType = unitID.split("-",1)[0]
+    unitPDFUrl = awsURL + unitType + "_Units/" + unitID + "/" + unitID + "_Info_Page.pdf"
+    fileFunctions.chooseFolderToSaveFile( [unitPDFUrl, unitID + " Info Page", ".pdf", "PDFs"] )
+
 def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for the unit
     itemType = unitType = unitID.split("-",1)[0]
     itemNumber = unitType = unitID.split("-",1)[1]
@@ -173,6 +195,14 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
     )
     passTest=json.loads(response['Payload'].read())
     labelURL=passTest["qrLabelURL"]
+
+def createNewUnitPDF(unitID, unitInfo): #connects to AWS Lambda to generate a label for the unit
+    payload = dict(unitID=unitID, unitInfo=unitInfo)
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-west-1:105369739187:function:Hardware-Donations-PDF-Generator',
+        InvocationType='RequestResponse',
+        Payload=json.dumps(payload),
+    )
 
 def changeUnitLocation(original, current): #Selects version of ARK-OS
     unitLocations = ["Unknown","Donated","Site 1(Bosco Tech)","Site 2(Roosevelt)","Site 3(ELAC)", "Cancel"]
