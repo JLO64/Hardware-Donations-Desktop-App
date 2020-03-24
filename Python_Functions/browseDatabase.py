@@ -67,10 +67,15 @@ def selectCategory():
                 intDecision = 0
                 searchResults = searchUnits()
                 if searchResults["unitExists"]: unitEdit.unitEditOptions(searchResults["rJSON"], searchResults["unitID"])
-                else: terminalColor.printRedString("unable to find unit")
+                elif searchResults["unitExists"] and ( searchResults["reason"] == "Unable To Find Unit"):terminalColor.printRedString("unable to find unit")
+                elif searchResults["unitExists"] and ( searchResults["reason"] == "Invalid Access Level"):terminalColor.printRedString("Invalid Access Level")
+                else: terminalColor.printRedString("Error")
             elif ( listOfOptions[intDecision-1] == ". Create Unit"):
                 intDecision = 0
                 createUnit()
+            elif ( listOfOptions[intDecision-1] == ". Search Users"):
+                intDecision = 0
+                terminalColor.printRedString("unable to find user")
         except:
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
@@ -103,7 +108,7 @@ def searchUnits():
             unitID = unitType + "-" + str(unitNumInt)
             responseJson = getUnitInfo(unitID)
             if (responseJson["result"] == True ): return dict(unitExists=True, rJSON=responseJson, unitID=unitID)
-            else: return dict(unitExists=False, unitID=unitID)
+            else: return dict(unitExists=False, unitID=unitID, reason=responseJson["reason"])
         except:
             unitTypeInt = 0
             terminalColor.printRedString("Invalid Input")
@@ -153,6 +158,9 @@ def createUnit():
     searchResults = searchUnits()
     if searchResults["unitExists"]: 
         terminalColor.printRedString("This unit already exists")
+        return
+    elif searchResults["reason"] == "Invalid Access Level":
+        terminalColor.printRedString("Invalid Access Level")
         return
     unitID = searchResults["unitID"]
     terminalColor.printGreenString("No unit located with this id")

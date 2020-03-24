@@ -77,7 +77,6 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
                 try: testVariable = responseJson["Unit_ID"]
                 except: responseJson["Unit_ID"] = "bad"
                 return responseJson
-                
             elif ( listOfOptions[intDecision-1] == ". Save and Exit" ) and len(stuffToUpdate) > 0:
                 if typeOfEditing == "Editing Existing Unit":
                     if verifyUploadData(stuffToUpdate): return uploadUnitUpdate(stuffToUpdate, unitInfo["Unit_ID"])
@@ -294,20 +293,18 @@ def rlinput(prompt, prefill=''): #code for input with text prefilled in
       readline.set_startup_hook()
 
 def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
-    verifyIdentify = browseDatabase.askForCredentials(False)
-    if verifyIdentify:
-        try:
-            payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_delete", unitID=unitID)
-            response = lambda_client.invoke(
-                FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
-                InvocationType='RequestResponse',
-                Payload=json.dumps(payload),
-            )
-            responseJSON=json.loads(response['Payload'].read())
-            return responseJSON["result"]
-        except:
-            return False
-    return False
+    try:
+        payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_delete", unitID=unitID)
+        response = lambda_client.invoke(
+            FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload),
+        )
+        responseJSON=json.loads(response['Payload'].read())
+        if not responseJSON["result"]: terminalColor.printRedString("Failed to delete unit: " + responseJSON["reason"])
+        return responseJSON["result"]
+    except:
+        return False
 
 def checkIfCategoryHasLists(category):
     categoryWithLists = ["RAM Type","CPU Architecture","ARK-OS_Version","Location"]
