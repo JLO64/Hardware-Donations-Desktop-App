@@ -3,7 +3,7 @@ import json, os
 
 def changeSettings():
     intDecision = 0
-    listOfOptions =[". GUI Mode", ". Color Mode", ". Account Settings", ". Version Info", ". Cancel"]
+    listOfOptions =[". GUI Mode", ". Color Mode", ". Account Settings", ". Version Info", ". Editing Mode", ". Cancel"]
     while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
         try:
             print("\nWhat settings do you want to change?")
@@ -20,6 +20,9 @@ def changeSettings():
             elif ( listOfOptions[intDecision-1] == ". Color Mode"):
                 intDecision = 0
                 changeColor()
+            elif ( listOfOptions[intDecision-1] == ". Editing Mode"):
+                intDecision = 0
+                changeEditingMode()
             elif ( listOfOptions[intDecision-1] == ". Account Settings"):
                 intDecision = 0
                 if browseDatabase.hasValidCredStored(): accountSettings(False)
@@ -96,6 +99,7 @@ def writeJSONSettings():
     data = {}
     data["GUImode"] = settingsJson.guiMode
     data["colorMode"] = settingsJson.colorMode
+    data["externalEditor"] = settingsJson.externalEditor
     with open( os.path.expanduser('~') + "/HardwareDonations/Settings/Settings", 'w') as outfile:
         json.dump(data, outfile)
 
@@ -113,6 +117,7 @@ def initializeSettings():
     data = readJSONSettings()
     if( not data == {} ):
         if(not settingsJson.guiMode == False): settingsJson.guiMode = data["GUImode"]
+        if(not settingsJson.externalEditor == True): settingsJson.externalEditor = data["externalEditor"]
         settingsJson.colorMode = data["colorMode"]
 
 def logoutOfAccount():
@@ -157,3 +162,32 @@ def accountSettings(isLoggedOut):
             except:
                 intDecision = 0
                 terminalColor.printRedString("Invalid Input")
+
+def changeEditingMode():
+    intDecision = 0
+    listOfOptions =[". In Program", ". Externally", ". Cancel"]
+    while ( ( (intDecision < 1) or (intDecision > len(listOfOptions)) ) ):
+        try:
+            print("\nHow do you want strings to be edited? Note, on Windows it is neccesary to edit strings exterrnally.")
+            if settingsJson.externalEditor: print("Currently strings are being edited through an external program.")
+            else: print("Currently strings are being edited internally.")
+
+            for i in range( len(listOfOptions) ):
+                terminalColor.printBlueString( str(i+1) + listOfOptions[i] )
+            intDecision = int(input())
+            if ( (intDecision < 1) or (intDecision > len(listOfOptions)) ):
+                terminalColor.printRedString("Invalid Input")
+            elif ( listOfOptions[intDecision-1] == ". Cancel"):
+                break
+            elif ( listOfOptions[intDecision-1] == ". Externally"):
+                settingsJson.externalEditor = True
+                writeJSONSettings()
+            elif ( listOfOptions[intDecision-1] == ". In Program"):
+                settingsJson.externalEditor = False
+                writeJSONSettings()
+            else:
+                intDecision = 0    
+        except:
+            intDecision = 0
+            terminalColor.printRedString("Invalid Input")
+    terminalColor.printGreenString("SETTINGS UPDATED")

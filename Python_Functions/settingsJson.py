@@ -3,4 +3,5 @@ colorMode = True
 key1 = "na"
 key2 = "na"
 key3 = "na"
-versionNum = "0.2 (Alpha)"
+versionNum = "0.3 (Beta)"
+externalEditor = False

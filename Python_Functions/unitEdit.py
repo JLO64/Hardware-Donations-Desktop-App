@@ -1,7 +1,9 @@
-import boto3, json, getpass, os, click, readline
+import boto3, json, getpass, os, click
 import terminalColor, settingsJson, fileFunctions, unitEdit, browseDatabase
 import array as arr
 from pyautogui import typewrite
+try: import readline
+except: settingsJson.externalEditor = True
 
 lambda_client = boto3.client('lambda')
 
@@ -277,20 +279,13 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
     try: oldData = copyOfStuffToUpdate[category]
     except: oldData = unitInfo[category]
     print("Original " + category + " Data: " + originalData)
-    newData = rlinput(category +": " ,oldData)
+    newData = methodOfEditingString(category +": " ,oldData)
     while len(newData) < 2 or len(newData) > 70:
         terminalColor.printRedString("The data you entered is too long or short")
-        newData = rlinput(category +": " ,oldData)
+        newData = methodOfEditingString(category +": " ,oldData)
     if newData == originalData and category in copyOfStuffToUpdate: del copyOfStuffToUpdate[category]
     elif not newData == originalData: copyOfStuffToUpdate[category] = newData
     return copyOfStuffToUpdate
-
-def rlinput(prompt, prefill=''): #code for input with text prefilled in
-   readline.set_startup_hook(lambda: readline.insert_text(prefill))
-   try:
-      return input(prompt)
-   finally:
-      readline.set_startup_hook()
 
 def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
     try:
@@ -320,3 +315,14 @@ def verifyUploadData(jsonToUpload):
         if strDecision.lower() == "yes" or strDecision.lower() == "y": return True
         elif strDecision.lower() == "no" or strDecision.lower() == "n": return False
         else: terminalColor.printRedString("Invalid Input")                        
+
+def methodOfEditingString(prompt, dataToEdit):
+    if settingsJson.externalEditor: return click.edit(dataToEdit).replace("\n", "")
+    else: return rlinput(prompt ,dataToEdit)
+
+def rlinput(prompt, prefill=''): #code for input with text prefilled in
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)
+   finally:
+      readline.set_startup_hook()
