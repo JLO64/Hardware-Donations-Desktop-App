@@ -1,7 +1,7 @@
 import boto3, json, getpass, os, click
 import terminalColor, settingsJson, fileFunctions, unitEdit
 
-lambda_client = boto3.client('lambda')
+lambda_client = boto3.client('lambda', region_name='us-west-1')
 
 def loginToAWS():
     if not hasValidCredStored():

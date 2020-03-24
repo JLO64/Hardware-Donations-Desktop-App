@@ -5,7 +5,7 @@ from pyautogui import typewrite
 try: import readline
 except: settingsJson.externalEditor = True
 
-lambda_client = boto3.client('lambda')
+lambda_client = boto3.client('lambda', region_name='us-west-1')
 
 def unitEditOptions(responseJson, unitID): #unit options user is given
     intDecision = 0
