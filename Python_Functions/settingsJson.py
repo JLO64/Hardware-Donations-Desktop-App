@@ -5,5 +5,5 @@ key2 = "na"
 key3 = "na"
 versionNum = "0.3 (Beta)"
 externalEditor = False
-aws_access_key_id = "AKIARRCEGT6ZTBPF3YIQ"
-aws_secret_access_key = "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"
+aws_access_key_id = ""
+aws_secret_access_key = ""
