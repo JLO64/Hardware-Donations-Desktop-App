@@ -8,7 +8,7 @@
             "name": "Python: Hardware Donations File",
             "type": "python",
             "request": "launch",
-            "program": "/home/user/Documents/GitHub_Code/Hardware-Donations-Desktop-App/Hardware-Donations.py",
+            "program": "${workspaceFolder}/Hardware-Donations.py",
             "console": "externalTerminal"
         },
         {
