@@ -4,10 +4,14 @@ import array as arr
 from pyautogui import typewrite
 try: import readline
 except: settingsJson.externalEditor = True
+try:
+    from tkinter import Tk
+    from tkinter.filedialog import askopenfilename
+except: settingsJson.guiMode = False
 
 def unitEditOptions(responseJson, unitID): #unit options user is given
     intDecision = 0
-    listOfOptions =[". Edit Entry",". Download Unit Photos", ". Download Unit Label", ". Download Unit PDF", ". Delete Unit", ". Exit"]
+    listOfOptions =[". Edit Entry", ". Upload New Photo", ". Download Unit Photos", ". Download Unit Label", ". Download Unit PDF", ". Delete Unit", ". Exit"]
     while ( (intDecision < 1 ) or (intDecision > len(listOfOptions)) ):
         try:
             printUnitInfo(responseJson, unitID)
@@ -19,6 +23,9 @@ def unitEditOptions(responseJson, unitID): #unit options user is given
             elif ( listOfOptions[intDecision-1] == ". Edit Entry"):
                 intDecision = 0
                 responseJson = unitEditEntry(responseJson, "Editing Existing Unit")
+            elif ( listOfOptions[intDecision-1] == ". Upload New Photo"):
+                intDecision = 0
+                uploadNewPhoto(unitID)
             elif ( listOfOptions[intDecision-1] == ". Delete Unit"):
                 if deleteUnit(unitID): terminalColor.printGreenString("Unit Deleted")
                 else: intDecision = 0
@@ -119,7 +126,7 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
 
 def uploadUnitUpdate(stuffToUpdate, unitID): #Connects to AWS lambda to update unit data
     payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_update", unitID=unitID, updateInfo=stuffToUpdate)
-    response = initiateLambdaClient().invoke(
+    response = settings.initiateLambdaClient().invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -187,7 +194,7 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
     itemType = unitType = unitID.split("-",1)[0]
     itemNumber = unitType = unitID.split("-",1)[1]
     payload = dict(itemType=itemType, itemNumber=itemNumber)
-    response = initiateLambdaClient().invoke(
+    response = settings.initiateLambdaClient().invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDLabelGenerator',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -197,7 +204,7 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
 
 def createNewUnitPDF(unitID, unitInfo): #connects to AWS Lambda to generate a label for the unit
     payload = dict(unitID=unitID, unitInfo=unitInfo)
-    response = initiateLambdaClient().invoke(
+    response = settings.initiateLambdaClient().invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:Hardware-Donations-PDF-Generator',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -288,7 +295,7 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
 def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
     try:
         payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_delete", unitID=unitID)
-        response = initiateLambdaClient().invoke(
+        response = settings.initiateLambdaClient().invoke(
             FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
             InvocationType='RequestResponse',
             Payload=json.dumps(payload),
@@ -324,3 +331,21 @@ def rlinput(prompt, prefill=''): #code for input with text prefilled in
       return input(prompt)
    finally:
       readline.set_startup_hook()
+
+def uploadNewPhoto(unitID):
+    print("\nAre you sure you want to replace the unit photo?(Yes/No)")
+    strDecision = input()
+    if strDecision.lower() == "yes" or strDecision.lower() == "y":
+        Tk().withdraw()
+        filepath = askopenfilename()
+        filename = filepath.split("/")[-1]
+        filetype = filename.split(".")[-1]
+        filename = filename.replace(" ", "")
+        if filetype.lower() == "jpg" or filetype.lower() == "jpeg" or filetype.lower() == "png":
+            uploadLocation = fileFunctions.uploadToS3(unitID, filename, filepath)
+            if not uploadLocation == "false":
+                stuffToUpdate = dict(Photo_URL=uploadLocation)
+                uploadUnitUpdate(stuffToUpdate, unitID)
+            else: terminalColor.printRedString("Upload failed")
+        else: terminalColor.printRedString("Invalid file type. Please upload a \"JPEG\" or \"PNG\" file")
+    else: terminalColor.printRedString("Upload canceled")

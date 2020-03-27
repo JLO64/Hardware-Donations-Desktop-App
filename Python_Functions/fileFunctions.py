@@ -1,5 +1,5 @@
 import settingsJson, terminalColor
-import sys, os, urllib.request
+import sys, os, urllib.request, boto3
 try:
     from tkinter import *
     from tkinter import filedialog
@@ -97,3 +97,19 @@ def chooseFolderToSaveFile( downloadInfo ):
             print("File Saved To: " + fileLoc)
         else:
             terminalColor.printRedString("DOWNLOAD CANCELED")
+
+def uploadToS3(unitID, filename, filepath):
+    try:
+        print("Uploading to S3")
+        itemType = unitID.split("-")[0]
+        S3 = boto3.client(
+            's3',
+            region_name='us-west-1',
+            aws_access_key_id=settingsJson.aws_access_key_id,
+            aws_secret_access_key=settingsJson.aws_secret_access_key
+        )
+        UPLOAD_FILELOCATION = "Unit_Photos/" + itemType + "_Units/" + unitID + "/" + filename
+        BUCKET_NAME = 'hardware-donations-database-gamma'
+        S3.upload_file(filepath, BUCKET_NAME, UPLOAD_FILELOCATION)
+        return "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/" + UPLOAD_FILELOCATION
+    except: return "false"
