@@ -1,7 +1,5 @@
 import boto3, json, getpass, os, click
-import terminalColor, settingsJson, fileFunctions, unitEdit
-
-lambda_client = boto3.client('lambda', region_name='us-west-1', aws_access_key_id=settingsJson.aws_access_key_id, aws_secret_access_key=settingsJson.aws_secret_access_key)
+import terminalColor, settingsJson, fileFunctions, unitEdit, settings
 
 def loginToAWS():
     if not hasValidCredStored():
@@ -39,7 +37,7 @@ def askForCredentials(storeCredentials): #Ask user for login info
 
 
 def checkCredentials(credentials): #Connect to AWS Lambda to check login
-    response = lambda_client.invoke(
+    response = settings.lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(credentials),
@@ -115,7 +113,7 @@ def searchUnits():
 
 def getUnitInfo(unitID):
     payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_info", unitID=unitID)
-    response = lambda_client.invoke(
+    response = settings.lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -175,7 +173,7 @@ def createUnit():
         elif unitType == "HDL": newUnitJSON["Category"] = "HDL(Hardware Donations Laptop)"
         elif unitType == "NX": newUnitJSON["Category"] = "NX(Experimental)"
         payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=newUnitJSON)
-        response = lambda_client.invoke(
+        response = settings.lambda_client.invoke(
             FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
             InvocationType='RequestResponse',
             Payload=json.dumps(payload),

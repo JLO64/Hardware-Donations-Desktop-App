@@ -1,11 +1,9 @@
 import boto3, json, getpass, os, click
-import terminalColor, settingsJson, fileFunctions, unitEdit, browseDatabase
+import terminalColor, settingsJson, fileFunctions, unitEdit, browseDatabase, settings
 import array as arr
 from pyautogui import typewrite
 try: import readline
 except: settingsJson.externalEditor = True
-
-lambda_client = boto3.client('lambda', region_name='us-west-1')
 
 def unitEditOptions(responseJson, unitID): #unit options user is given
     intDecision = 0
@@ -121,7 +119,7 @@ def unitEditEntry(responseJson, typeOfEditing): #User selects what category they
 
 def uploadUnitUpdate(stuffToUpdate, unitID): #Connects to AWS lambda to update unit data
     payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_update", unitID=unitID, updateInfo=stuffToUpdate)
-    response = lambda_client.invoke(
+    response = settings.lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -189,7 +187,7 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
     itemType = unitType = unitID.split("-",1)[0]
     itemNumber = unitType = unitID.split("-",1)[1]
     payload = dict(itemType=itemType, itemNumber=itemNumber)
-    response = lambda_client.invoke(
+    response = settings.lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDLabelGenerator',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -199,7 +197,7 @@ def createNewUnitLabel(unitID): #connects to AWS Lambda to generate a label for 
 
 def createNewUnitPDF(unitID, unitInfo): #connects to AWS Lambda to generate a label for the unit
     payload = dict(unitID=unitID, unitInfo=unitInfo)
-    response = lambda_client.invoke(
+    response = settings.lambda_client.invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:Hardware-Donations-PDF-Generator',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -290,7 +288,7 @@ def editTextEntry(stuffToUpdate, unitInfo, category): #code to edit data in a ca
 def deleteUnit(unitID): #connects to AWS Lambda to delete a unit
     try:
         payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_delete", unitID=unitID)
-        response = lambda_client.invoke(
+        response = settings.lambda_client.invoke(
             FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
             InvocationType='RequestResponse',
             Payload=json.dumps(payload),

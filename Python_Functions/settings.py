@@ -1,5 +1,7 @@
-import terminalColor, fileFunctions, settingsJson, browseDatabase
-import json, os
+import terminalColor, fileFunctions, settingsJson, browseDatabase, boto3
+import json, os, urllib.request
+
+lambda_client = boto3.client("lambda")
 
 def changeSettings():
     intDecision = 0
@@ -113,7 +115,23 @@ def readJSONSettings():
         data = {}
         return data
 
+def readLambdaKeys():
+    if fileFunctions.checkForFile(os.path.expanduser('~') + "/HardwareDonations/Settings/LambdaAccessKeys"):
+        with open(os.path.expanduser('~') + "/HardwareDonations/Settings/LambdaAccessKeys") as json_file:
+            data = json.load(json_file)
+            return data
+    else: 
+        data = {}
+        return data
+
 def initializeSettings():
+    downloadLambdaKeys()
+    lambdaKeys = readLambdaKeys()
+    if( not lambdaKeys == {} ):
+        settingsJson.aws_access_key_id = lambdaKeys["aws_access_key_id"]
+        settingsJson.aws_secret_access_key = lambdaKeys["aws_secret_access_key"]
+    initiateLambdaClient()
+
     data = readJSONSettings()
     if( not data == {} ):
         if(not settingsJson.guiMode == False): settingsJson.guiMode = data["GUImode"]
@@ -191,3 +209,17 @@ def changeEditingMode():
             intDecision = 0
             terminalColor.printRedString("Invalid Input")
     terminalColor.printGreenString("SETTINGS UPDATED")
+
+def downloadLambdaKeys():
+    terminalColor.printGreenString("Downloading access keys")
+    url = "https://hardware-donations-database-gamma.s3-us-west-1.amazonaws.com/Misc_Items/LambdaAccessKeys"
+    urllib.request.urlretrieve(url, os.path.expanduser('~') + "/HardwareDonations/Settings/LambdaAccessKeys" )
+    terminalColor.printGreenString("Download Finished")
+
+def initiateLambdaClient():
+    lambda_client = boto3.client(
+        'lambda',
+        region_name='us-west-1',
+        aws_access_key_id=settingsJson.aws_access_key_id,
+        aws_secret_access_key=settingsJson.aws_secret_access_key
+    )
