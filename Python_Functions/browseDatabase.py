@@ -37,7 +37,7 @@ def askForCredentials(storeCredentials): #Ask user for login info
 
 
 def checkCredentials(credentials): #Connect to AWS Lambda to check login
-    response = settings.lambda_client.invoke(
+    response = settings.initiateLambdaClient().invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(credentials),
@@ -113,7 +113,7 @@ def searchUnits():
 
 def getUnitInfo(unitID):
     payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_info", unitID=unitID)
-    response = settings.lambda_client.invoke(
+    response = settings.initiateLambdaClient().invoke(
         FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
         InvocationType='RequestResponse',
         Payload=json.dumps(payload),
@@ -173,7 +173,7 @@ def createUnit():
         elif unitType == "HDL": newUnitJSON["Category"] = "HDL(Hardware Donations Laptop)"
         elif unitType == "NX": newUnitJSON["Category"] = "NX(Experimental)"
         payload = dict(key1=settingsJson.key1, key2=settingsJson.key2, key3=settingsJson.key3, type="unit_create", unitID=unitID, unitInfo=newUnitJSON)
-        response = settings.lambda_client.invoke(
+        response = settings.initiateLambdaClient().invoke(
             FunctionName='arn:aws:lambda:us-west-1:105369739187:function:HDPasswordCheck',
             InvocationType='RequestResponse',
             Payload=json.dumps(payload),

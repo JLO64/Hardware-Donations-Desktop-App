@@ -1,8 +1,6 @@
 import terminalColor, fileFunctions, settingsJson, browseDatabase, boto3
 import json, os, urllib.request
 
-lambda_client = boto3.client("lambda")
-
 def changeSettings():
     intDecision = 0
     listOfOptions =[". GUI Mode", ". Color Mode", ". Account Settings", ". Version Info", ". Editing Mode", ". Cancel"]
@@ -130,7 +128,6 @@ def initializeSettings():
     if( not lambdaKeys == {} ):
         settingsJson.aws_access_key_id = lambdaKeys["aws_access_key_id"]
         settingsJson.aws_secret_access_key = lambdaKeys["aws_secret_access_key"]
-    initiateLambdaClient()
 
     data = readJSONSettings()
     if( not data == {} ):
@@ -223,3 +220,4 @@ def initiateLambdaClient():
         aws_access_key_id=settingsJson.aws_access_key_id,
         aws_secret_access_key=settingsJson.aws_secret_access_key
     )
+    return lambda_client
