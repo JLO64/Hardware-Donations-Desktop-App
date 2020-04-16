@@ -12,6 +12,7 @@ def printARKDino():
 if __name__ == "__main__":
     terminalColor.printGreenString("STARTING PROGRAM...")
     fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations")
+    fileFunctions.checkForDirectory(os.path.expanduser('~') + "/HardwareDonations/Settings")
     settings.initializeSettings()
     terminalColor.printGreenString("SETTINGS LOADED!")
     printARKDino()
